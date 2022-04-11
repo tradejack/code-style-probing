@@ -121,6 +121,18 @@ def repo_analysis(repo_name, path):
 
     return updated_stats
     
+def graph_stats(red_x_data, red_y_data, blue_x_data, blue_y_data, title, x_axis, y_axis):
+  """
+  Plots 
+  """
+  fig = plt.figure()
+  ax = fig.add_axes([0,0,1,1])
+  ax.bar(red_x_data+blue_x_data, red_y_data + blue_y_data, color=['r']*len(red_x_data)+['b']*len(blue_x_data))
+  plt.title(title)
+  plt.ylabel(y_axis)
+  plt.xlabel(x_axis)
+  plt.xticks(rotation=90)
+  plt.show()
 
 repos = listdir(PATH)
 print (repos)
