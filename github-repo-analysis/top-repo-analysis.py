@@ -1,6 +1,7 @@
 #imports
 import math
 from github import Github
+from matplotlib import plt
 from os import walk
 from os import listdir
 import os
