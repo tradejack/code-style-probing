@@ -6,6 +6,11 @@ git clone https://github.com/tonsV2/Gnome-menu-applet.git
 git clone https://github.com/mconlon17/vivo-remove-people.git
 git clone https://github.com/mwolak07/Calculator-Course-2019.git
 git clone https://github.com/mdamien/shopi.git
+git clone https://github.com/yaoguai/cjk-defn.git
+git clone https://github.com/sirpercival/ir-reduce.git
+git clone https://github.com/integrativemodeling/fret_benchmark.git
+git clone https://github.com/jgeewax/googlepersonfinder.git
+git clone https://github.com/owenant/python_chess.git
 
 
 # top repos
