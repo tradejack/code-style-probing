@@ -1,7 +1,10 @@
 #! repos cloned
+# TODO - add scripting that clones everything into a directory
+# and adds a gitignore to the top of that directory so all the
+# toy files don't get committed to our repo 
 
 # bottom repos
-git clone https://github.com/martyfuhry/npy_datetime.git
+git clone https://github.com/martyfuhry/npy_datetime.git 
 git clone https://github.com/tonsV2/Gnome-menu-applet.git
 git clone https://github.com/mconlon17/vivo-remove-people.git
 git clone https://github.com/mwolak07/Calculator-Course-2019.git
