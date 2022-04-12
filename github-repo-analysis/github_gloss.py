@@ -113,9 +113,10 @@ repo_evals = {}
 
 personal = ["npy_datetime", "shopi", "Gnome-menu-applet", "Calculator-Course-2019", "vivo-remove-people", "cjk-defn", "ir-reduce", "fret_benchmark", "googlepersonfinder", "python_chess"]
 professional =  ['awesome-python', 'django', 'flask', 'keras', 'nltk', 'pandas', 'pytorch', 'scikit-learn', 'scipy', 'youtube-dl']
-all_repos = personal + professional
+all_repos =  professional + personal
 
-for repo in personal:
+for repo in all_repos:
+  print(f"Scanning repo {repo}...")
   path = "data/"+repo
   repo_evals[repo] = repo_probe(path)
 
@@ -124,18 +125,21 @@ print(eval_df)
 
 # TODO: prune out no-docstring documents
 
-def graph_stats(x , y, title, x_axis, y_axis):
+def graph_stats(x , y, title, x_axis, y_axis, path):
   """
   Plots 
   """
   fig = plt.figure()
   ax = fig.add_axes([0,0,1,1])
-  ax.bar(x, y, color=['r']*5+['b']*5)
+  ax.bar(x, y, color=['r']*(len(x)//2)+['b']*(len(x)//2) )
   plt.title(title)
   plt.ylabel(y_axis)
   plt.xlabel(x_axis)
   plt.xticks(rotation=90)
-  plt.savefig(title+".png", bbox_inches='tight', pad_inches=0)
+  plt.savefig(path+".png", bbox_inches='tight', pad_inches=0)
 
-graph_stats(personal, eval_df.loc['average_comment_count',], "Test", "x", "y")
+for stat in repo_evals["npy_datetime"]:
+  if stat != "casing_count":
+    title = " ".join(stat.split('_')).title()
+    graph_stats(all_repos, eval_df.loc[stat,], title +" across Repos", "Repositories", title, "graphs/"+stat)
 
