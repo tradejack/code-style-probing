@@ -17,28 +17,38 @@ test_code = "def function_name(par_1, parTwo, camelCase)\n\t\"\"\"\n\tdocstring 
 # Use AST package for better parsing! 
 
 def count_casing(input_code):
-  case_dict = {"camelCase":0,
-               "snake_case":0}
-  camel = r"[a-z]+([A-Z][a-z0-9]+)+"
-  snake = r"[a-z]+(_[a-z0-9]+)+"
-  input_code = input_code.replace("("," ")
-  input_code = input_code.replace(")"," ")
-  for token in input_code.split():
-    if re.match(camel, token):
-      case_dict["camelCase"] += 1
-    elif re.match(snake, token):
-      case_dict["snake_case"] += 1
-  return case_dict
+    case_dict = {"lowerCamelCase": 0, "UpperCamelCase": 0, "snake_case": 0}
+    lower_camel = r"[a-z]+([A-Z][a-z0-9]+)+"
+    upper_camel = r"[A-Z][a-z]+([A-Z][a-z0-9]+)+"
+    snake = r"[a-z]+(_[a-z0-9]+)+"
+    input_code = input_code.replace("(", " ")
+    input_code = input_code.replace(")", " ")
+    for token in input_code.split():
+        if re.match(lower_camel, token):
+            case_dict["lowerCamelCase"] += 1
+        elif re.match(upper_camel, token):
+            case_dict["UpperCamelCase"] += 1
+        elif re.match(snake, token):
+            case_dict["snake_case"] += 1
+    return case_dict
+
 
 def count_docstrings(input_code):
-  docstr = r"\"\"\"[\s\S]*?\"\"\""
-  search = re.findall(docstr, input_code)
-  return search
+    docstr = r"\"\"\"[\s\S]*?\"\"\"|\'\'\'[\s\S]*?\'\'\'"
+    search = re.findall(docstr, input_code)
+    doc_len = 0
+    for docstring in search:
+        doc_len += len(docstring)
+    return len(search), doc_len
+
 
 def count_comments(input_code):
-  comment = r"#.*"
-  search = re.findall(comment, input_code)
-  return search
+    comment = r"#.*"
+    search = re.findall(comment, input_code)
+    comment_len = 0
+    for comment in search:
+        comment_len += len(comment)
+    return len(search), comment_len
 
 # test the regex searching methods:
 # print(f"Casing  count: {count_casing(test_code)}")
@@ -80,20 +90,17 @@ def repo_probe(directory):
               line_count += sum([1 for _ in code.split("\n")])
 
               # calculate stats
-              comments = count_comments(code)
-              num_comments = len(comments)
-
-              docstrings = count_docstrings(code)
-              num_docstrings = len(docstrings)
+              num_comments, comments_lengths = count_comments(code)
+              num_docstrings, docstring_lengths = count_docstrings(code)
 
               if num_comments: # if there were any comments in this file; update
                 comment_count  += num_comments
-                comment_length += sum([len(com)for com in comments])/num_comments
+                comment_length += comments_lengths/num_comments
                 comment_density += num_comments / line_count
               
               if num_docstrings: 
                 docstring_count  += num_docstrings
-                docstring_length += sum([len(doc)for doc in docstrings])/num_docstrings
+                docstring_length += docstring_lengths/num_docstrings
                 docstring_density += num_docstrings / line_count
 
               eval_dict['casing_count'] += Counter(count_casing(code))
@@ -114,8 +121,9 @@ repo_evals = {}
 personal = ["npy_datetime", "shopi", "Gnome-menu-applet", "Calculator-Course-2019", "vivo-remove-people", "cjk-defn", "ir-reduce", "fret_benchmark", "googlepersonfinder", "python_chess"]
 professional =  ['awesome-python', 'django', 'flask', 'keras', 'nltk', 'pandas', 'pytorch', 'scikit-learn', 'scipy', 'youtube-dl']
 all_repos =  professional + personal
+all_repos_normal = [repo for repo in all_repos if repo not in ['awesome-python', 'python_chess'] ] 
 
-for repo in all_repos:
+for repo in all_repos_normal:
   print(f"Scanning repo {repo}...")
   path = "data/"+repo
   repo_evals[repo] = repo_probe(path)
@@ -141,5 +149,12 @@ def graph_stats(x , y, title, x_axis, y_axis, path):
 for stat in repo_evals["npy_datetime"]:
   if stat != "casing_count":
     title = " ".join(stat.split('_')).title()
-    graph_stats(all_repos, eval_df.loc[stat,], title +" across Repos", "Repositories", title, "graphs/"+stat)
+    graph_stats(all_repos_normal, eval_df.loc[stat,], title +" across Repos", "Repositories", title, "graphs/"+stat)
 
+snake_case = [lookup['snake_case'] for lookup in eval_df.loc['casing_count']]
+lower_camel_case = [lookup['lowerCamelCase'] for lookup in eval_df.loc['casing_count']]
+upper_camel_case = [lookup['UpperCamelCase'] for lookup in eval_df.loc['casing_count']]
+
+graph_stats(all_repos_normal, snake_case, "Snake Case count" +" across Repos", "Repositories", "Snake Case count", "graphs/"+"Snake-Case-count")
+graph_stats(all_repos_normal, lower_camel_case, "lower Camel Case count" +" across Repos", "Repositories", "lower Camel Case count", "graphs/"+"lower-Case-count")
+graph_stats(all_repos_normal, upper_camel_case, "Upper Camel Case count" +" across Repos", "Repositories", "Upper Camel Case count", "graphs/"+"upper-Case-count")
