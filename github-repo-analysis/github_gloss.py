@@ -10,6 +10,7 @@ import re
 import os
 from collections import Counter
 import pandas as pd
+from ast_gloss import ast_parse
 
 test_code = "def function_name(par_1, parTwo, camelCase)\n\t\"\"\"\n\tdocstring time\n\t\"\"\"\n\tvar_1 = 42 # cool and awesome comment\n\tprint('hello world!') #comment too\n\treturn "
 # print(test_code)
@@ -74,10 +75,7 @@ def repo_probe(directory):
   comment_density =  0
   docstring_density =  0
 
-  eval_dict = {
-    'casing_count' : Counter(),
-    'total_num_files' : 0
-  }
+  eval_dict = Counter()
 
   for root, _, files in os.walk(directory):
       for file_name in files:
@@ -91,27 +89,24 @@ def repo_probe(directory):
 
               # calculate stats
               num_comments, comments_lengths = count_comments(code)
-              num_docstrings, docstring_lengths = count_docstrings(code)
 
               if num_comments: # if there were any comments in this file; update
                 comment_count  += num_comments
                 comment_length += comments_lengths/num_comments
                 comment_density += num_comments / line_count
               
-              if num_docstrings: 
-                docstring_count  += num_docstrings
-                docstring_length += docstring_lengths/num_docstrings
-                docstring_density += num_docstrings / line_count
-
-              eval_dict['casing_count'] += Counter(count_casing(code))
               eval_dict['total_num_files'] += 1
+              try:
+                parse = ast_parse(code)
+                eval_dict += parse
+              except:
+                print(f"Parse error on file {file_path}, skipping.")
+
+  #TODO: Normalize new AST counts over number of files/lines etc to get better stuff. make more graphs
   
   eval_dict['average_comment_count']    =  comment_count    / eval_dict["total_num_files"]          
   eval_dict['average_comment_length']   =  comment_length   / eval_dict["total_num_files"]
   eval_dict['average_comment_density']   =  comment_density / eval_dict["total_num_files"] 
-  eval_dict['average_docstring_count']  =  docstring_count  / eval_dict["total_num_files"]         
-  eval_dict['average_docstring_length'] =  docstring_length / eval_dict["total_num_files"]
-  eval_dict['average_docstring_density']   =  docstring_density   / eval_dict["total_num_files"] 
   eval_dict['average_lines_per_file']   =  line_count / eval_dict["total_num_files"]
 
   return eval_dict
@@ -146,15 +141,16 @@ def graph_stats(x , y, title, x_axis, y_axis, path):
   plt.xticks(rotation=90)
   plt.savefig(path+".png", bbox_inches='tight', pad_inches=0)
 
-for stat in repo_evals["npy_datetime"]:
-  if stat != "casing_count":
-    title = " ".join(stat.split('_')).title()
-    graph_stats(all_repos_normal, eval_df.loc[stat,], title +" across Repos", "Repositories", title, "graphs/"+stat)
+if False:
+  for stat in repo_evals["npy_datetime"]:
+    if stat != "casing_count":
+      title = " ".join(stat.split('_')).title()
+      graph_stats(all_repos_normal, eval_df.loc[stat,], title +" across Repos", "Repositories", title, "graphs/"+stat)
 
-snake_case = [lookup['snake_case'] for lookup in eval_df.loc['casing_count']]
-lower_camel_case = [lookup['lowerCamelCase'] for lookup in eval_df.loc['casing_count']]
-upper_camel_case = [lookup['UpperCamelCase'] for lookup in eval_df.loc['casing_count']]
+  snake_case = [lookup['snake_case'] for lookup in eval_df.loc['casing_count']]
+  lower_camel_case = [lookup['lowerCamelCase'] for lookup in eval_df.loc['casing_count']]
+  upper_camel_case = [lookup['UpperCamelCase'] for lookup in eval_df.loc['casing_count']]
 
-graph_stats(all_repos_normal, snake_case, "Snake Case count" +" across Repos", "Repositories", "Snake Case count", "graphs/"+"Snake-Case-count")
-graph_stats(all_repos_normal, lower_camel_case, "lower Camel Case count" +" across Repos", "Repositories", "lower Camel Case count", "graphs/"+"lower-Case-count")
-graph_stats(all_repos_normal, upper_camel_case, "Upper Camel Case count" +" across Repos", "Repositories", "Upper Camel Case count", "graphs/"+"upper-Case-count")
+  graph_stats(all_repos_normal, snake_case, "Snake Case count" +" across Repos", "Repositories", "Snake Case count", "graphs/"+"Snake-Case-count")
+  graph_stats(all_repos_normal, lower_camel_case, "lower Camel Case count" +" across Repos", "Repositories", "lower Camel Case count", "graphs/"+"lower-Case-count")
+  graph_stats(all_repos_normal, upper_camel_case, "Upper Camel Case count" +" across Repos", "Repositories", "Upper Camel Case count", "graphs/"+"upper-Case-count")
