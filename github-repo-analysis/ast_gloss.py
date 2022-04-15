@@ -22,6 +22,7 @@ def ast_parse(path):
         id = type(node) 
         if id in targets: 
             if id == ast.Name: # if we find a variable, count its casing
+                id_counter['var_total'] += 1
                 case = casing(node.id)
                 if case:
                     id_counter[case] += 1

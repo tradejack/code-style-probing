@@ -11,6 +11,8 @@ import os
 from collections import Counter
 import pandas as pd
 from ast_gloss import ast_parse
+from tqdm import tqdm
+import ast
 
 test_code = "def function_name(par_1, parTwo, camelCase)\n\t\"\"\"\n\tdocstring time\n\t\"\"\"\n\tvar_1 = 42 # cool and awesome comment\n\tprint('hello world!') #comment too\n\treturn "
 # print(test_code)
@@ -93,21 +95,32 @@ def repo_probe(directory):
               if num_comments: # if there were any comments in this file; update
                 comment_count  += num_comments
                 comment_length += comments_lengths/num_comments
-                comment_density += num_comments / line_count
               
               eval_dict['total_num_files'] += 1
               try:
                 parse = ast_parse(code)
                 eval_dict += parse
               except:
-                print(f"Parse error on file {file_path}, skipping.")
+                print(f"Parse error on file {file_path}, skipping.") #TODO try different encodings to get special characters
 
   #TODO: Normalize new AST counts over number of files/lines etc to get better stuff. make more graphs
-  
-  eval_dict['average_comment_count']    =  comment_count    / eval_dict["total_num_files"]          
-  eval_dict['average_comment_length']   =  comment_length   / eval_dict["total_num_files"]
-  eval_dict['average_comment_density']   =  comment_density / eval_dict["total_num_files"] 
-  eval_dict['average_lines_per_file']   =  line_count / eval_dict["total_num_files"]
+  file_count = eval_dict["total_num_files"]
+  var_count = eval_dict["var_total"]
+  eval_dict['average_comment_count']  =  comment_count    / file_count  # average comment count over files        
+  eval_dict['average_comment_length'] =  comment_length   / comment_count # average length of comments
+  eval_dict['comment_line_density']   =  comment_count / line_count # average number of commented lines
+
+  total_methods = eval_dict[ast.FunctionDef] + eval_dict[ast.ClassDef]
+  if total_methods: # normalizes docstrings over number of classes AND functions 
+    eval_dict['methods_with_docstrings'] = eval_dict["ds_count"] / total_methods
+
+  if var_count: # gets casing ratio over all variable counts
+    eval_dict['ratio_snake_case'] = eval_dict['snake_case'] / var_count
+    eval_dict['ratio_locamel_case'] = eval_dict['lower_camel'] / var_count
+    eval_dict['ratio_upcamel_case'] = eval_dict['upper_camel'] / var_count
+    eval_dict['ratio_lower_case'] = eval_dict['lower'] / var_count
+
+  eval_dict['lines_per_file']   =  line_count / eval_dict["total_num_files"]
 
   return eval_dict
 
@@ -115,7 +128,7 @@ repo_evals = {}
 
 personal = ["npy_datetime", "shopi", "Gnome-menu-applet", "Calculator-Course-2019", "vivo-remove-people", "cjk-defn", "ir-reduce", "fret_benchmark", "googlepersonfinder", "python_chess"]
 professional =  ['awesome-python', 'django', 'flask', 'keras', 'nltk', 'pandas', 'pytorch', 'scikit-learn', 'scipy', 'youtube-dl']
-all_repos =  professional + personal
+all_repos =   personal + professional
 all_repos_normal = [repo for repo in all_repos if repo not in ['awesome-python', 'python_chess'] ] 
 
 for repo in all_repos_normal:
