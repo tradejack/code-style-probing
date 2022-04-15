@@ -11,9 +11,8 @@ test_code = "def function_name(par_1, parTwo, camelCase):\n\t\"\"\"\n\tdocstring
 def ast_parse(path):
     """
     Tracks:
-        Comment raw count, char length, word length,  
-        Docstri raw count, char length, word length, function density
-        Variabl raw count, char length, casing, word length (if possible)
+        Docstring raw count, char length, word length, function density
+        Variable  raw count, char length, casing, word length (if possible)
     """
     parse = ast.parse(path)
     ast.dump(parse)
@@ -21,12 +20,12 @@ def ast_parse(path):
     id_counter = Counter()
     for node in ast.walk(parse):
         id = type(node) 
-        if id in targets:
-            if id == ast.Name:
+        if id in targets: 
+            if id == ast.Name: # if we find a variable, count its casing
                 case = casing(node.id)
                 if case:
                     id_counter[case] += 1
-            else:
+            else: # if we find a function or class name, check for docstrings
                 doc = ast.get_docstring(node)
                 if doc:
                     id_counter["ds_count"] += 1
