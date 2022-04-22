@@ -150,7 +150,27 @@ def repo_probe(directory):
     eval_dict['ratio_locamel_case'] = eval_dict['lower_camel'] / var_count
     eval_dict['ratio_upcamel_case'] = eval_dict['upper_camel'] / var_count
     eval_dict['ratio_lower_case'] = eval_dict['lower'] / var_count
-
+    
+  #added metrics for 4/22
+  eval_dict['functions_per_file'] = eval_dict[ast.FunctionDef] / file_count
+  eval_dict['classes_per_file'] = eval_dict[ast.ClassDef] / file_count
+  eval_dict['async_functions_per_repo'] = eval_dict[ast.AsyncFunctionDef]
+  eval_dict['functions_per_repo'] = eval_dict[ast.FunctionDef]
+  eval_dict['classes_per_repo'] =eval_dict[ast.ClassDef]
+  if eval_dict['classes_per_repo'] != 0:
+    eval_dict['parents_per_class'] = eval_dict['num_parents'] / eval_dict['classes_per_repo']
+  if eval_dict['functions_per_repo'] != 0:
+    eval_dict['decorators_per_function'] = eval_dict['num_decorators_func'] / eval_dict['functions_per_repo']
+  if eval_dict['classes_per_repo'] != 0:
+    eval_dict['decorators_per_class'] = eval_dict['num_decorators_class'] / eval_dict['classes_per_repo']
+  #cleanup things with ast names for clarity sake
+  del eval_dict[ast.FunctionDef]
+  del eval_dict[ast.ClassDef]
+  del eval_dict[ast.Name]
+  del eval_dict['num_parents']
+  del eval_dict['num_decorators_class'] 
+  del eval_dict['num_decorators_func'] 
+  del eval_dict[ast.AsyncFunctionDef] 
   eval_dict['lines_per_file']   =  line_count / eval_dict["total_num_files"]
 
   return eval_dict

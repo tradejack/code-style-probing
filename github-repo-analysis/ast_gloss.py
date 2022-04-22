@@ -28,6 +28,14 @@ def ast_parse(path):
                     id_counter[case] += 1
             else: # if we find a function or class name, check for docstrings
                 doc = ast.get_docstring(node)
+                #if class def found see how many parents
+                if id == ast.ClassDef:
+                    #print (len(node.bases))
+                    id_counter["num_parents"] += len(node.bases)
+                    id_counter["num_decorators_class"]  += len(node.decorator_list)
+                else:
+                    id_counter["num_decorators_func"]  += len(node.decorator_list)
+                doc = ast.get_docstring(node)
                 if doc:
                     id_counter["ds_count"] += 1
                     id_counter["ds_char_len"] += len(doc)
