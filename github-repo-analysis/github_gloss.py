@@ -4,6 +4,7 @@
 Original file is located at
     https://colab.research.google.com/drive/1AbskOFQkoWuXOFAf1nIS6vEdalpZ84Mv
 """
+from cgi import test
 import matplotlib.pyplot as plt
 from pydoc import doc
 import re 
@@ -14,7 +15,7 @@ from ast_gloss import ast_parse
 from tqdm import tqdm
 import ast
 
-test_code = "def function_name(par_1, parTwo, camelCase)\n\t\"\"\"\n\tdocstring time\n\t\"\"\"\n\tvar_1 = 42 # cool and awesome comment\n\tprint('hello world!') #comment too\n\treturn "
+test_code = "def function_name(par_1, parTwo, camelCase):\n\t\"\"\"\n\tdocstring time\n\t\"\"\"\n\tvar_1 = 42 # cool and awesome comment\n\tprint('hello world!') #comment too\n\treturn "
 # print(test_code)
 
 # Use AST package for better parsing! 
@@ -53,6 +54,36 @@ def count_comments(input_code):
         comment_len += len(comment)
     return len(search), comment_len
 
+def count_whitespace(input_code):
+  non_space_lines = len(input_code.split())
+  spaces = 0
+  for char in input_code:
+    if char == "\n":
+      spaces += 1
+  return (spaces-non_space_lines)/spaces
+
+def count_type_comments(input_code):
+  parse = ast.parse(input_code, type_comments = True)
+  ast.dump(parse)
+  comments = 0
+  for node in ast.walk(parse):
+    id = type(node) 
+    if id == ast.PyCF_TYPE_COMMENTS: # if we find a variable, count its casing
+      comments += 1
+  return comments
+
+def count_lines_per_method(input_code):
+    parse = ast.parse(input_code, type_comments = True)
+    ast.dump(parse)
+    print(parse)
+    comments = 0
+    for node in ast.walk(parse):
+      id = type(node) 
+      if id == ast.PyCF_TYPE_COMMENTS: # if we find a variable, count its casing
+        comments += 1
+    return comments
+    
+print(count_lines_per_method(test_code))
 # test the regex searching methods:
 # print(f"Casing  count: {count_casing(test_code)}")
 # print(f"Docstr  count: {count_docstrings(test_code)}")
@@ -130,14 +161,14 @@ personal = ["npy_datetime", "shopi", "Gnome-menu-applet", "Calculator-Course-201
 professional =  ['awesome-python', 'django', 'flask', 'keras', 'nltk', 'pandas', 'pytorch', 'scikit-learn', 'scipy', 'youtube-dl']
 all_repos =   personal + professional
 all_repos_normal = [repo for repo in all_repos if repo not in ['awesome-python', 'python_chess'] ] 
+if False:
+  for repo in all_repos_normal:
+    print(f"Scanning repo {repo}...")
+    path = "data/"+repo
+    repo_evals[repo] = repo_probe(path)
 
-for repo in all_repos_normal:
-  print(f"Scanning repo {repo}...")
-  path = "data/"+repo
-  repo_evals[repo] = repo_probe(path)
-
-eval_df = pd.DataFrame(repo_evals)
-print(eval_df)
+  eval_df = pd.DataFrame(repo_evals)
+  print(eval_df)
 
 # TODO: prune out no-docstring documents
 
