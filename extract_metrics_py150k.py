@@ -2,8 +2,9 @@ import re
 import json
 
 from tqdm.auto import tqdm
+import pandas as pd
 
-from config import PY150K_DIR
+from config import PY150K_TRAIN_AST, PY150K_TRAIN_CODE, PY150K_CODE_DIR
 
 IDENTIFIER_AST_NODE_TYPES = [
     "NameParam",
@@ -283,6 +284,70 @@ def count_comments(input_code):
     return len(search), comment_len
 
 
+def create_df(data):
+    data_df = pd.DataFrame(data, columns=["file_name"])
+
+    # get the repo and username from script file name
+    script_file_name_regex = re.compile(r"data/([^/]+)/([^/]+)/.+")
+
+    usernames = []
+    repos = []
+    py_scripts = []
+    comments = []
+    comment_lens = []
+    comment_dens = []
+    line_counts = []
+
+    for file_name in tqdm(data_df["file_name"]):
+
+        match = script_file_name_regex.search(file_name)
+        if not match:
+            print(file_name)
+
+        username = match.group(1)
+        repo_name = match.group(2)
+
+        file_string = read_file_to_string(f"{PY150K_CODE_DIR}/{file_name}")
+        line_count = len(file_string.split("\n"))
+
+        comment_count, comment_len = count_comments(file_string)
+        comment_den = (
+            round(comment_count / line_count, 6) if line_count > 0 else 0
+        )
+
+        usernames += [username]
+        repos += [repo_name]
+        py_scripts += [file_string]
+        comments += [comment_count]
+        comment_lens += [comment_len]
+        comment_dens += [comment_den]
+        line_counts += [line_count]
+
+    data_df["user_name"] = usernames
+    data_df["repo_name"] = repos
+    data_df["py_script"] = py_scripts
+    data_df["comment"] = comments
+    data_df["comment_len"] = comment_lens
+    data_df["comment_den"] = comment_dens
+    data_df["line_count"] = line_counts
+
+    return data_df
+
+
 if __name__ == "__main__":
-    asts = read_py150k_ast(f"{PY150K_DIR}/python100k_train.json", 1)
-    print(asts)
+    # sample code for loading Py150k ast strings
+    sample_ast_str = read_py150k_ast(PY150K_TRAIN_AST, 1)[0]
+    print(sample_ast_str)
+
+    # sample code for extracting metrics from Py150K AST
+    ast_tree = ast_str2tree(sample_ast_str)
+    data_metric = extract_metric_from_ast(ast_tree)
+    print(data_metric)
+
+    # sample code for loading Py150k code
+    sample_code_filename = read_py150k_code(PY150K_TRAIN_CODE, 1)[0]
+    print(sample_code_filename)
+
+    # sample code for extracting metrics from Py150K script
+    sample_data_df = create_df([sample_code_filename])
+    print(sample_data_df)
