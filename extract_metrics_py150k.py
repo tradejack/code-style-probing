@@ -191,30 +191,27 @@ def get_docstring(node):
     return doc_strs
 
 
-def count_method_with_docstring(node, result):
-    _id = node.type
-    if _id == "FunctionDef":
-        ds = get_docstring(node)
-        if ds:
-            result["func_docstr"] = result.get("func_docstr", 0) + 1
-
-
 def count_docstring(node, doc_result):
     doc_strs = get_docstring(node)
     if not doc_strs:
         return
+    doc_result["count"] += len(doc_strs)
     for doc_str in doc_strs:
+        # Total docstring lines
         doc_result["lines"] += len(doc_str.split("\n"))
-        doc_result["len"] += len(doc_str)
+        # Avg. docstring length in character-level
+        doc_result["char_len"] += len(doc_str)
+        # Avg. docstring length in word-level
+        doc_result["word_len"] += len(doc_str.split())
 
     _id = node.type
+    # # methods with docstrings
     if _id == "FunctionDef":
         doc_result["func_docstr_count"] += 1
 
 
 def identifier_count_to_proportion(result):
     proportion_results = {}
-    total_case_count = {}
     id_types = result.keys()
     for id_type in id_types:
         id_type_result = result[id_type]
@@ -251,7 +248,8 @@ def extract_metric_from_ast(root):
     ]
     doc_result = {
         "lines": 0,
-        "len": 0,
+        "char_len": 0,
+        "word_len": 0,
         "count": 0,
         "func_docstr_count": 0,
     }
@@ -260,6 +258,18 @@ def extract_metric_from_ast(root):
         count_identifier(node, id_results)
         # Count Docstring
         count_docstring(node, doc_result)
+
+    # Avg. docstring length
+    doc_result["char_len"] = (
+        round(doc_result["char_len"] / doc_result["count"], 6)
+        if doc_result["count"] > 0
+        else 0
+    )
+    doc_result["word_len"] = (
+        round(doc_result["word_len"] / doc_result["count"], 6)
+        if doc_result["count"] > 0
+        else 0
+    )
 
     id_result = identifier_count_to_proportion(
         {
@@ -336,7 +346,7 @@ def create_df(data):
 
 if __name__ == "__main__":
     # sample code for loading Py150k ast strings
-    sample_ast_str = read_py150k_ast(PY150K_TRAIN_AST, 1)[0]
+    sample_ast_str = read_py150k_ast(PY150K_TRAIN_AST, 20)[18]
     print(sample_ast_str)
 
     # sample code for extracting metrics from Py150K AST
@@ -345,7 +355,7 @@ if __name__ == "__main__":
     print(data_metric)
 
     # sample code for loading Py150k code
-    sample_code_filename = read_py150k_code(PY150K_TRAIN_CODE, 1)[0]
+    sample_code_filename = read_py150k_code(PY150K_TRAIN_CODE, 20)[18]
     print(sample_code_filename)
 
     # sample code for extracting metrics from Py150K script
