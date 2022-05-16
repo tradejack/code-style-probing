@@ -66,6 +66,6 @@ def casing(token):
     else:
         return None
 
-print(ast_parse(test_code))
+#print(ast_parse(test_code))
 #for test in test_text:
     #print(casing(test))
