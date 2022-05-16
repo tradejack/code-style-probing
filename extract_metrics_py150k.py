@@ -358,7 +358,7 @@ if __name__ == "__main__":
     print(data_metrics[18])
 
     # sample code for loading Py150k code
-    sample_code_filenames = read_py150k_code(PY150K_TRAIN_CODE)
+    sample_code_filenames = read_py150k_code(PY150K_TRAIN_CODE, limit=20)
     print(sample_code_filenames[18])
 
     # sample code for extracting metrics from Py150K script
