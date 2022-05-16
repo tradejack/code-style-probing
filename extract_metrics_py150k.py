@@ -345,19 +345,22 @@ def create_df(data):
 
 
 if __name__ == "__main__":
-    # sample code for loading Py150k ast strings
-    sample_ast_str = read_py150k_ast(PY150K_TRAIN_AST, 20)[18]
-    print(sample_ast_str)
+    # sample code for loading Py150k ast strings, remove limit for loading all data
+    sample_ast_str_list = read_py150k_ast(PY150K_TRAIN_AST, limit=20)
+    print(sample_ast_str_list[18])
 
     # sample code for extracting metrics from Py150K AST
-    ast_tree = ast_str2tree(sample_ast_str)
-    data_metric = extract_metric_from_ast(ast_tree)
-    print(data_metric)
+    data_metrics = []
+    for sample_ast_str in sample_ast_str_list:
+        ast_tree = ast_str2tree(sample_ast_str)
+        data_metric = extract_metric_from_ast(ast_tree)
+        data_metrics.append(data_metric)
+    print(data_metrics[18])
 
     # sample code for loading Py150k code
-    sample_code_filename = read_py150k_code(PY150K_TRAIN_CODE, 20)[18]
-    print(sample_code_filename)
+    sample_code_filenames = read_py150k_code(PY150K_TRAIN_CODE)
+    print(sample_code_filenames[18])
 
     # sample code for extracting metrics from Py150K script
-    sample_data_df = create_df([sample_code_filename])
-    print(sample_data_df)
+    sample_data_df = create_df(sample_code_filenames)
+    print(sample_data_df[18])
