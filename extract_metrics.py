@@ -143,7 +143,7 @@ def count_async_method(ast_node, node_type, counter, py150k=False):
 
 
 def count_method_ratio(counter):
-    counter["func_decotrators_avg"] = calculate_ratio(
+    counter["func_decorators_avg"] = calculate_ratio(
         counter["func_decorators_count"], counter["func_count"]
     )
     counter["func_async_ratio"] = calculate_ratio(
