@@ -9,8 +9,7 @@ CASING_REGEX_MAPPING = {
 }
 COMMENT_REGEX = r"#.*"
 
-# TODO: need to add none-of-these
-# TODO: need to make regex consistent
+
 def casing(token):
     """
     returns the casing of the input text, as well as any subword splits

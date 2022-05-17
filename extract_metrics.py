@@ -5,11 +5,26 @@ To make the extracted metric consistent, put the code here
 import ast
 from collections import Counter
 
-from utils.helper import read_file_to_string, calculate_ratio
+from utils.helper import (
+    read_file_to_string,
+    calculate_ratio,
+    read_py150k_ast,
+    read_py150k_code,
+)
 from utils.regex_parse import casing, comment, CASING_REGEX_MAPPING
-from utils.ast_parse import ast_parse
+from utils.ast_parse import (
+    Py150kAST,
+    get_ast_node_type,
+    get_func_type,
+    get_class_type,
+    get_var_type,
+    get_async_func_type,
+    get_docstring,
+    get_parents,
+    get_decorators,
+)
+from config import *
 
-FUNC_TYPES = [ast.AsyncFunctionDef, ast.FunctionDef]
 
 # Documentation
 # Comments
@@ -27,18 +42,18 @@ def count_comment(code, counter):
 
 
 # Docstrings
-def count_docstring(ast_node, counter):
+def count_docstring(ast_node, node_type, counter, py150k=False):
     # if we find a function or class name, check for docstrings
-    if type(ast_node) not in ([ast.ClassDef] + FUNC_TYPES):
+    if node_type not in (get_class_type(py150k) + get_func_type(py150k)):
         return
-    doc = ast.get_docstring(ast_node)
+    doc = get_docstring(ast_node, py150k)
     if not doc:
         return
     counter["ds_count"] += 1
     counter["ds_char_len_total"] += len(doc)
     counter["ds_word_len_total"] += len(doc.split())
     counter["ds_line_count"] += len(doc.split("\n"))
-    if type(ast_node) == ast.FunctionDef:
+    if node_type in get_func_type(py150k):
         counter["ds_of_method"] += 1
 
 
@@ -59,25 +74,45 @@ def count_docstring_average(counter):
 
 # Formatting
 # Casing Counts
-def count_casing(ast_node, counter):
+def count_casing(ast_node, node_type, counter, py150k=False):
     # if we find a variable, count its casing
-    if type(ast_node) != ast.Name:
+    if node_type not in (
+        get_var_type(py150k) + get_class_type(py150k) + get_func_type(py150k)
+    ):
         return
+
+    if py150k:
+        token = ast_node.value
+    elif node_type in get_var_type(py150k):
+        token = ast_node.id
+    else:
+        token = ast_node.name
+
+    case = casing(token)
+
     counter["id_total"] += 1
-    case = casing(ast_node.id)
-    if case:
-        counter[case] += 1
+    counter[case] += 1
+
+    if node_type in get_var_type(py150k):
+        counter["id_total_var"] += 1
+        counter[f"{case}_var"] += 1
+    if node_type in get_class_type(py150k):
+        counter["id_total_class"] += 1
+        counter[f"{case}_class"] += 1
+    if node_type in get_func_type(py150k):
+        counter["id_total_method"] += 1
+        counter[f"{case}_method"] += 1
 
 
 def count_casing_ratio(counter):
-    for case in CASING_REGEX_MAPPING.keys():
+    for case in list(CASING_REGEX_MAPPING.keys()) + ["other_case"]:
         counter[f"{case}_ratio"] = calculate_ratio(
             counter[case], counter["id_total"]
         )
-
-    counter["other_case_ratio"] = calculate_ratio(
-        counter["other_case"], counter["id_total"]
-    )
+        for id_type in ["var", "class", "method"]:
+            counter[f"{case}_{id_type}_ratio"] = calculate_ratio(
+                counter[f"{case}_{id_type}"], counter[f"id_total_{id_type}"]
+            )
 
 
 # Line Metrics
@@ -87,19 +122,22 @@ def count_lines(code, counter):
 
 # Methods/Classes
 # Method Metrics
-def count_method(ast_node, counter):
+def count_method(ast_node, node_type, counter, py150k=False):
     # if func def found see how many parents and decorators
-    if type(ast_node) not in FUNC_TYPES:
+    if node_type not in get_func_type(py150k):
         return
     counter["func_count"] += 1
-    counter["func_decorators_count"] += len(ast_node.decorator_list)
-    if type(ast_node) != ast.AsyncFunctionDef:
+    counter["func_decorators_count"] += len(get_decorators(ast_node, py150k))
+
+
+def count_async_method(ast_node, node_type, counter, py150k=False):
+    if node_type not in get_async_func_type(py150k):
         return
     counter["func_async_count"] += 1
 
 
 def count_method_ratio(counter):
-    counter["func_decotrators_ratio"] = calculate_ratio(
+    counter["func_decotrators_avg"] = calculate_ratio(
         counter["func_decorators_count"], counter["func_count"]
     )
     counter["func_async_ratio"] = calculate_ratio(
@@ -108,20 +146,20 @@ def count_method_ratio(counter):
 
 
 # Class Metrics
-def count_class(ast_node, counter):
+def count_class(ast_node, node_type, counter, py150k=False):
     # if class def found see how many parents and decorators
-    if type(ast_node) != ast.ClassDef:
+    if node_type not in get_class_type(py150k):
         return
     counter["class_count"] += 1
-    counter["class_parents_count"] += len(ast_node.bases)
-    counter["class_decorators_count"] += len(ast_node.decorator_list)
+    counter["class_parents_count"] += len(get_parents(ast_node, py150k))
+    counter["class_decorators_count"] += len(get_decorators(ast_node, py150k))
 
 
 def count_class_ratio(counter):
     counter["class_parents_ratio"] = calculate_ratio(
         counter["class_parents_count"], counter["class_count"]
     )
-    counter["class_decorators_ratio"] = calculate_ratio(
+    counter["class_decorators_avg"] = calculate_ratio(
         counter["class_decorators_count"], counter["class_count"]
     )
 
@@ -129,10 +167,9 @@ def count_class_ratio(counter):
 # Python Language Features
 
 
-def extract_metrics(code):
+def extract_metrics(code, ast_tree, py150k=False):
 
     metrics = Counter()
-    ast_tree = ast_parse(code)
 
     extract_funcs_from_code = [count_lines, count_comment]
     extract_funcs_from_ast = [
@@ -140,6 +177,7 @@ def extract_metrics(code):
         count_docstring,
         count_class,
         count_method,
+        count_async_method,
     ]
     extract_funcs_from_counter = [
         count_casing_ratio,
@@ -152,9 +190,12 @@ def extract_metrics(code):
     for extract_func in extract_funcs_from_code:
         extract_func(code, metrics)
 
-    for node in ast.walk(ast_tree):
+    ast_walk_func = Py150kAST.ast_walk if py150k else ast.walk
+
+    for node in ast_walk_func(ast_tree):
+        node_type = get_ast_node_type(node, py150k)
         for extract_func in extract_funcs_from_ast:
-            extract_func(node, metrics)
+            extract_func(node, node_type, metrics, py150k)
 
     for extract_func in extract_funcs_from_counter:
         extract_func(metrics)
@@ -165,4 +206,20 @@ def extract_metrics(code):
 if __name__ == "__main__":
     # Python3 test code
     test_code = read_file_to_string("./utils/test_code.py")
-    print(extract_metrics(test_code))
+    test_ast_tree = ast.parse(test_code)
+    test_python3_metrics = extract_metrics(test_code, test_ast_tree)
+    print(test_python3_metrics)
+
+    # Py150k test code
+    sample_idx = 45
+    sample_ast_str_list = read_py150k_ast(PY150K_TRAIN_AST, limit=60)
+    sample_code_filenames = read_py150k_code(PY150K_TRAIN_CODE, limit=60)
+    test_code = read_file_to_string(
+        f"{PY150K_CODE_DIR}/{sample_code_filenames[sample_idx]}"
+    )
+    test_ast_tree = Py150kAST.ast_str_to_tree(sample_ast_str_list[sample_idx])
+    test_py150k_metrics = extract_metrics(
+        test_code, test_ast_tree, py150k=True
+    )
+    print(test_py150k_metrics)
+
