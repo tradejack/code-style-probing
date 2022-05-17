@@ -3,13 +3,17 @@ Extract Metric script for Python Code
 To make the extracted metric consistent, put the code here
 """
 import ast
+import sys
 from collections import Counter
+
+from tqdm.auto import tqdm
 
 from utils.helper import (
     read_file_to_string,
     calculate_ratio,
     read_py150k_ast,
     read_py150k_code,
+    metric_dict_to_df,
 )
 from utils.regex_parse import casing, comment, CASING_REGEX_MAPPING
 from utils.ast_parse import (
@@ -88,6 +92,8 @@ def count_casing(ast_node, node_type, counter, py150k=False):
     else:
         token = ast_node.name
 
+    if not token:
+        return
     case = casing(token)
 
     counter["id_total"] += 1
@@ -205,12 +211,15 @@ def extract_metrics(code, ast_tree, py150k=False):
 
 if __name__ == "__main__":
     # Python3 test code
+    print("\nTesting Python3 Code Metric Extraction\n")
     test_code = read_file_to_string("./utils/test_code.py")
     test_ast_tree = ast.parse(test_code)
     test_python3_metrics = extract_metrics(test_code, test_ast_tree)
     print(test_python3_metrics)
+    print(metric_dict_to_df([test_python3_metrics]))
 
     # Py150k test code
+    print("\nTesting Py150K Code Metric Extraction\n")
     sample_idx = 45
     sample_ast_str_list = read_py150k_ast(PY150K_TRAIN_AST, limit=60)
     sample_code_filenames = read_py150k_code(PY150K_TRAIN_CODE, limit=60)
@@ -222,4 +231,22 @@ if __name__ == "__main__":
         test_code, test_ast_tree, py150k=True
     )
     print(test_py150k_metrics)
+    print(metric_dict_to_df([test_py150k_metrics]))
 
+    if len(sys.argv) > 1 and sys.argv[1] == "py150k":
+        print("\nExtracting Py150K Code Data Metrics\n")
+        # Py150k all code metric extraction
+        ast_str_list = read_py150k_ast(PY150K_TRAIN_AST)
+        code_filenames = read_py150k_code(PY150K_TRAIN_CODE)
+
+        py150k_metrics_list = []
+        for idx in tqdm(range(len(ast_str_list))):
+            code_str = read_file_to_string(
+                f"{PY150K_CODE_DIR}/{code_filenames[idx]}"
+            )
+            ast_tree = Py150kAST.ast_str_to_tree(ast_str_list[idx])
+            py150k_metrics = extract_metrics(code_str, ast_tree, py150k=True)
+            py150k_metrics_list.append(py150k_metrics)
+
+        output_df = metric_dict_to_df(py150k_metrics_list)
+        output_df.to_csv("py150k_metrics.csv", index=False)
