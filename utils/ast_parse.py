@@ -94,6 +94,17 @@ def get_var_type(py150k=False):
         ]
     return [ast.Name]
 
+def get_comp_type(py150k=False):
+    if py150k:
+        #TODO: write py150k version
+        pass
+    return [ast.ListComp, ast.DictComp, ast.SetComp]
+
+def get_lambda_type(py150k=False):
+    if py150k:
+        #TODO: write py150k version
+        pass
+    return [ast.Lambda]
 
 def get_docstring(node, py150k=False):
     if py150k:

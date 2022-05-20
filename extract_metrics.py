@@ -26,6 +26,8 @@ from utils.ast_parse import (
     get_docstring,
     get_parents,
     get_decorators,
+    get_comp_type,
+    get_lambda_type
 )
 from config import *
 
@@ -171,8 +173,13 @@ def count_class_ratio(counter):
 
 
 # Python Language Features
+def count_comp(ast_node, node_type, counter, py150k=False):
+    if node_type not in get_comp_type(py150k):
+        return
+    counter["comprehensions"] += 1
 
 
+# Main extraction method
 def extract_metrics(code, ast_tree, py150k=False):
 
     metrics = Counter()
@@ -184,6 +191,7 @@ def extract_metrics(code, ast_tree, py150k=False):
         count_class,
         count_method,
         count_async_method,
+        count_comp,
     ]
     extract_funcs_from_counter = [
         count_casing_ratio,
