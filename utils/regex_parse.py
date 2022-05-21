@@ -9,7 +9,12 @@ CASING_REGEX_MAPPING = {
 }
 COMMENT_REGEX = r"#.*"
 
+#regex for overwritten function includes init
+BUILTIN_METHOD_REGEX = r"__.*__"
 
+def overridden_builtin(token):
+    return re.match(BUILTIN_METHOD_REGEX, token)
+    
 def casing(token):
     """
     returns the casing of the input text, as well as any subword splits

@@ -15,7 +15,7 @@ from utils.helper import (
     read_py150k_code,
     metric_dict_to_df,
 )
-from utils.regex_parse import casing, comment, CASING_REGEX_MAPPING
+from utils.regex_parse import casing, comment, CASING_REGEX_MAPPING, overridden_builtin
 from utils.ast_parse import (
     Py150kAST,
     get_ast_node_type,
@@ -107,9 +107,21 @@ def count_casing(ast_node, node_type, counter, py150k=False):
     if node_type in get_class_type(py150k):
         counter["id_total_class"] += 1
         counter[f"{case}_class"] += 1
+        # check if function is interal method
+        if token[0] == '_':
+            counter["internal_method"] += 1
+        #check if builtin is overridden
+        if overridden_builtin(token):
+            counter["overridden_method"] += 1
     if node_type in get_func_type(py150k):
         counter["id_total_method"] += 1
         counter[f"{case}_method"] += 1
+        # check if function is interal method
+        if token[0] == '_':
+            counter["internal_method"] += 1
+        #check if builtin is overridden
+        if overridden_builtin(token):
+            counter["overridden_method"] += 1
 
 
 def count_casing_ratio(counter):
