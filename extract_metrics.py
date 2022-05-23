@@ -190,6 +190,11 @@ def count_comp(ast_node, node_type, counter, py150k=False):
         return
     counter["comprehensions"] += 1
 
+#this needs to be on main
+def count_lambda(ast_node, node_type, counter, py150k=False):
+    if node_type not in get_lambda_type(py150k):
+        return
+    counter["lambdas"] += 1
 
 # Main extraction method
 def extract_metrics(code, ast_tree, py150k=False):
@@ -204,6 +209,7 @@ def extract_metrics(code, ast_tree, py150k=False):
         count_method,
         count_async_method,
         count_comp,
+        count_lambda
     ]
     extract_funcs_from_counter = [
         count_casing_ratio,
@@ -239,7 +245,7 @@ if __name__ == "__main__":
     print(metric_dict_to_df([test_python3_metrics]))
 
     # Py150k test code
-    print("\nTesting Py150K Code Metric Extraction\n")
+""" print("\nTesting Py150K Code Metric Extraction\n")
     sample_idx = 45
     sample_ast_str_list = read_py150k_ast(PY150K_TRAIN_AST, limit=60)
     sample_code_filenames = read_py150k_code(PY150K_TRAIN_CODE, limit=60)
@@ -270,3 +276,4 @@ if __name__ == "__main__":
 
         output_df = metric_dict_to_df(py150k_metrics_list)
         output_df.to_csv("py150k_metrics.csv", index=False)
+"""
