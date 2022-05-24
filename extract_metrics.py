@@ -21,6 +21,7 @@ from utils.regex_parse import (
     CASING_REGEX_MAPPING,
     overridden_builtin,
 )
+
 from utils.ast_parse import (
     Py150kAST,
     get_ast_node_type,
@@ -32,7 +33,8 @@ from utils.ast_parse import (
     get_parents,
     get_decorators,
     get_comp_type,
-    get_lambda_type,
+    get_generator_type,
+    get_lambda_type
 )
 from config import *
 
@@ -118,6 +120,7 @@ def count_casing(ast_node, node_type, counter, py150k=False):
         # check if builtin is overridden
         if overridden_builtin(token):
             counter["overridden_method"] += 1
+
     if node_type in get_func_type(py150k):
         counter["id_total_method"] += 1
         counter[f"{case}_method"] += 1
@@ -195,12 +198,15 @@ def count_comp(ast_node, node_type, counter, py150k=False):
         return
     counter["comprehensions"] += 1
 
+def count_generator(ast_node, node_type, counter, py150k=False):
+    if node_type not in get_generator_type(py150k):
+        return
+    counter["generators"] += 1
 
-# this needs to be on main
-def count_lambda(ast_node, node_type, counter, py150k=False):
+def count_lambda(ast_node, node_type, counter, py150k = False):
     if node_type not in get_lambda_type(py150k):
         return
-    counter["lambdas"] += 1
+    counter["lambda"] += 1
 
 
 # Main extraction method
@@ -217,6 +223,7 @@ def extract_metrics(code, ast_tree, py150k=False):
         count_async_method,
         count_comp,
         count_lambda,
+        count_generator
     ]
     extract_funcs_from_counter = [
         count_casing_ratio,
@@ -252,7 +259,7 @@ if __name__ == "__main__":
     print(metric_dict_to_df([test_python3_metrics]))
 
     # Py150k test code
-    print("\nTesting Py150K Code Metric Extraction\n")
+"""    print("\nTesting Py150K Code Metric Extraction\n")
     sample_idx = 45
     sample_ast_str_list = read_py150k_ast(PY150K_TRAIN_AST, limit=60)
     sample_code_filenames = read_py150k_code(PY150K_TRAIN_CODE, limit=60)
@@ -282,4 +289,4 @@ if __name__ == "__main__":
             py150k_metrics_list.append(py150k_metrics)
 
         output_df = metric_dict_to_df(py150k_metrics_list)
-        output_df.to_csv("py150k_metrics.csv", index=False)
+        output_df.to_csv("py150k_metrics.csv", index=False)"""
