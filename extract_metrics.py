@@ -312,4 +312,5 @@ if __name__ == "__main__":
             py150k_metrics_list.append(py150k_metrics)
 
         output_df = metric_dict_to_df(py150k_metrics_list)
+        output_df["path"] = code_filenames
         output_df.to_csv("py150k_metrics.csv", index=False)
