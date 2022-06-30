@@ -1,0 +1,505 @@
+{
+  "builder_name": null,
+  "citation": "",
+  "config_name": null,
+  "dataset_size": null,
+  "description": "",
+  "download_checksums": null,
+  "download_size": null,
+  "features": {
+    "line_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "comment_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "comment_total_len": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "comment_avg_len": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "comment_density": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "id_total": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_case": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "id_total_var": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_case_var": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "snake_case_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "snake_case_var_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "snake_case_class_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "snake_case_method_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_camel_case_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_camel_case_var_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_camel_case_class_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_camel_case_method_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_camel_case_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_camel_case_var_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_camel_case_class_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_camel_case_method_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_case_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_case_var_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_case_class_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_case_method_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_case_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_case_var_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_case_class_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_case_method_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "other_case_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "other_case_var_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "other_case_class_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "other_case_method_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "func_decorators_avg": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "func_async_ratio": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "class_parents_avg": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "class_decorators_avg": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "ds_density": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "ds_char_len_avg": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "ds_word_len_avg": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "comprehensions_avg": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "generators_avg": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lambda_avg": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "snake_case": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "snake_case_var": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "id_total_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "snake_case_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "func_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "func_decorators_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_camel_case": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_camel_case_var": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_camel_case": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "id_total_class": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_camel_case_class": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "class_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "class_parents_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "class_decorators_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "internal_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "overridden_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_case": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_case_var": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_camel_case_var": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_case_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "generators": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "ds_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "ds_char_len_total": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "ds_word_len_total": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "ds_line_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "ds_of_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lambda": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "other_case": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "other_case_class": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "other_case_var": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "comprehensions": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_camel_case_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_case_class": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "snake_case_class": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_camel_case_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "other_case_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_case_method": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "lower_camel_case_class": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "upper_case_class": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "repository": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "filepath": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "forks": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "issue_events": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "stars": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "parse_error": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "func_async_count": {
+      "dtype": "float64",
+      "id": null,
+      "_type": "Value"
+    },
+    "file": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "labels": {
+      "dtype": "int64",
+      "id": null,
+      "_type": "Value"
+    },
+    "content": {
+      "dtype": "string",
+      "id": null,
+      "_type": "Value"
+    },
+    "__index_level_0__": {
+      "dtype": "int64",
+      "id": null,
+      "_type": "Value"
+    },
+    "input_ids": {
+      "feature": {
+        "dtype": "int32",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    },
+    "attention_mask": {
+      "feature": {
+        "dtype": "int8",
+        "id": null,
+        "_type": "Value"
+      },
+      "length": -1,
+      "id": null,
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "post_processed": null,
+  "post_processing_size": null,
+  "size_in_bytes": null,
+  "splits": null,
+  "supervised_keys": null,
+  "task_templates": null,
+  "version": null
+}
