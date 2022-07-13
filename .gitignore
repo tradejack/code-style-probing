@@ -5,3 +5,8 @@ __pycache__
 decompiler-testing/out/
 decompiler-testing/compile.py
 decompiler-testing/test.cpython-39.pyc
+
+prediction_results
+results_ken
+results_codet5
+datasets
