@@ -10,3 +10,5 @@ prediction_results
 results_ken
 results_codet5
 datasets
+clustering_results
+checkpoint
