@@ -9,16 +9,29 @@ from vocab import Vocab
 
 train_dataset = load_from_disk(PLBART_TRAIN)
 test_dataset = load_from_disk(PLBART_TEST)
+
 train_dataset.set_format(columns=["input_ids", "attention_mask", "labels"])
 test_dataset.set_format(columns=["input_ids", "attention_mask", "labels"])
+
+train_cluster_labels = np.array(train_dataset["labels"])
+test_cluster_labels = np.array(test_dataset["labels"])
+train_indice_list = np.logical_or(
+    (train_cluster_labels == 0), (train_cluster_labels == 1)
+)
+test_indice_list = np.logical_or(
+    (test_cluster_labels == 0), (test_cluster_labels == 1)
+)
+train_dataset = train_dataset.select(np.where(train_indice_list)[0])
+test_dataset = test_dataset.select(np.where(test_indice_list)[0])
+# train_dataset = Dataset.from_dict(train_dataset[:64])
+# test_dataset = Dataset.from_dict(test_dataset[:64])
+
 
 cluster_labels = np.array(train_dataset["labels"])
 cluster_labels_no_outliers = cluster_labels[cluster_labels != -1]
 cluster_vocab = Vocab([cluster_labels])
-STYLE_DIM = len(cluster_vocab) - 1
+STYLE_DIM = len(np.unique(cluster_labels_no_outliers))
 
-# train_dataset = Dataset.from_dict(train_dataset[:64])
-test_dataset = Dataset.from_dict(test_dataset[:64])
 
 tokenizer = PLBartTokenizer.from_pretrained(
     "uclanlp/plbart-multi_task-python",
