@@ -1,10 +1,10 @@
 import numpy as np
-from transformers import PLBartTokenizer
+from transformers import PLBartTokenizer, RobertaTokenizer
 from transformers import default_data_collator
 from datasets import load_from_disk, Dataset
 from torch.utils.data import DataLoader
 
-from config import BATCH_SIZE, PLBART_TRAIN, PLBART_TEST
+from config import BATCH_SIZE, PLBART_TRAIN, PLBART_TEST, MODEL
 from vocab import Vocab
 
 train_dataset = load_from_disk(PLBART_TRAIN)
@@ -33,12 +33,17 @@ cluster_vocab = Vocab([cluster_labels])
 STYLE_DIM = len(np.unique(cluster_labels_no_outliers))
 
 
-tokenizer = PLBartTokenizer.from_pretrained(
-    "uclanlp/plbart-multi_task-python",
-    language_codes="multi",
-    src_lang="python",
-    tgt_lang="python",
-)
+if MODEL == "codet5":
+    tokenizer = RobertaTokenizer.from_pretrained("Salesforce/codet5-small")
+elif MODEL == "plbart":
+    tokenizer = PLBartTokenizer.from_pretrained(
+        "uclanlp/plbart-multi_task-python",
+        language_codes="multi",
+        src_lang="python",
+        tgt_lang="python",
+    )
+else:
+    raise ValueError("The model should be 'codet5' or 'plbart'")
 
 
 def get_data_loader(dataset, split="train"):

@@ -8,7 +8,11 @@ PY150K_EVAL_CODE = "data/py150/py150_files/python50k_eval.txt"
 PLBART_TRAIN = "datasets/plbart_train.hf"
 PLBART_TEST = "datasets/plbart_test.hf"
 
-ARCH = "plbart_small_set"
+CODET5_TRAIN = "datasets/codet5_train.hf"
+CODET5_TEST = "datasets/codet5_test.hf"
+
+MODEL = "codet5"  # "codet5" or "plbart"
+ARCH = "plbart_token_level_embed"
 BATCH_SIZE = 8
 NUM_EPOCHS = 100
 

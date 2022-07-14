@@ -1,12 +1,17 @@
 import torch
 from torch.nn import CrossEntropyLoss
-from transformers import PLBartForConditionalGeneration
+from transformers import (
+    PLBartForConditionalGeneration,
+    T5ForConditionalGeneration,
+)
 from typing import Any, Dict, List, Optional, Tuple, Union
 from transformers.modeling_outputs import (
     BaseModelOutput,
     Seq2SeqLMOutput,
     Seq2SeqModelOutput,
 )
+
+from config import MODEL
 
 
 def shift_tokens_right(input_ids: torch.Tensor, pad_token_id: int):
@@ -53,9 +58,14 @@ class Modifier(torch.nn.Module):
 class InRepPlusGAN(torch.nn.Module):
     def __init__(self, style_dim):
         super(InRepPlusGAN, self).__init__()
-        self.model = PLBartForConditionalGeneration.from_pretrained(
-            "uclanlp/plbart-multi_task-python",
-        )
+        if MODEL == "plbart":
+            self.model = PLBartForConditionalGeneration.from_pretrained(
+                "uclanlp/plbart-multi_task-python",
+            )
+        elif MODEL == "codet5":
+            self.model = T5ForConditionalGeneration.from_pretrained(
+                "Salesforce/codet5-base",
+            )
         self.encoder = self.model.get_encoder()
         self.decoder = self.model.get_decoder()
         self.config = self.model.config
