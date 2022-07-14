@@ -31,6 +31,25 @@ def shift_tokens_right(input_ids: torch.Tensor, pad_token_id: int):
     return prev_output_tokens
 
 
+class Modifier(torch.nn.Module):
+    def __init__(self, input_dim, output_dim, hidden_1, hidden_2):
+        super(Modifier, self).__init__()
+        self.linear_1 = torch.nn.Linear(input_dim, hidden_1)
+        self.linear_2 = torch.nn.Linear(hidden_1, hidden_2)
+        self.linear_3 = torch.nn.Linear(hidden_2, output_dim)
+
+    def forward(self, x):
+        out = self.linear_1(x)
+        out = torch.nn.functional.relu(out)
+
+        out = self.linear_2(out)
+        out = torch.nn.functional.relu(out)
+
+        out = self.linear_3(out)
+
+        return out
+
+
 class InRepPlusGAN(torch.nn.Module):
     def __init__(self, style_dim):
         super(InRepPlusGAN, self).__init__()
@@ -40,8 +59,11 @@ class InRepPlusGAN(torch.nn.Module):
         self.encoder = self.model.get_encoder()
         self.decoder = self.model.get_decoder()
         self.config = self.model.config
-        self.modifier = torch.nn.Linear(
-            self.config.d_model + style_dim, self.config.d_model
+        self.modifier = Modifier(
+            input_dim=self.config.d_model + style_dim,
+            output_dim=self.config.d_model,
+            hidden_1=768,
+            hidden_2=768,
         )
 
     def forward(
@@ -240,9 +262,10 @@ class InRepPlusGAN(torch.nn.Module):
         output_hidden_states: Optional[bool] = None,
         return_dict: Optional[bool] = None,
     ):
-        # encoder E, with no grad
-        if encoder_outputs is None:
-            with torch.no_grad():
+
+        with torch.no_grad():
+            # encoder E, with no grad
+            if encoder_outputs is None:
                 encoder_outputs = self.encoder(
                     input_ids=input_ids,
                     attention_mask=attention_mask,
@@ -252,18 +275,20 @@ class InRepPlusGAN(torch.nn.Module):
                     output_hidden_states=output_hidden_states,
                     return_dict=return_dict,
                 )
-        # If the user passed a tuple for encoder_outputs, we wrap it in a BaseModelOutput when return_dict=True
-        elif return_dict and not isinstance(encoder_outputs, BaseModelOutput):
-            encoder_outputs = BaseModelOutput(
-                last_hidden_state=encoder_outputs[0],
-                hidden_states=encoder_outputs[1]
-                if len(encoder_outputs) > 1
-                else None,
-                attentions=encoder_outputs[2]
-                if len(encoder_outputs) > 2
-                else None,
-            )
-        return encoder_outputs
+            # If the user passed a tuple for encoder_outputs, we wrap it in a BaseModelOutput when return_dict=True
+            elif return_dict and not isinstance(
+                encoder_outputs, BaseModelOutput
+            ):
+                encoder_outputs = BaseModelOutput(
+                    last_hidden_state=encoder_outputs[0],
+                    hidden_states=encoder_outputs[1]
+                    if len(encoder_outputs) > 1
+                    else None,
+                    attentions=encoder_outputs[2]
+                    if len(encoder_outputs) > 2
+                    else None,
+                )
+            return encoder_outputs
 
     # def forward(self, **inputs):
     #     outputs = self.model(**inputs)
@@ -272,7 +297,13 @@ class InRepPlusGAN(torch.nn.Module):
 
 class Discriminator(torch.nn.Module):
     def __init__(
-        self, vocab_size, embedding_dim, output_size, style_dim, device="cpu"
+        self,
+        vocab_size,
+        embedding_dim,
+        embedding_layer,
+        output_size,
+        style_dim,
+        device="cpu",
     ):
         super(Discriminator, self).__init__()
 
@@ -280,7 +311,7 @@ class Discriminator(torch.nn.Module):
         self.style_dim = style_dim
         self.device = device
 
-        self.embedding = torch.nn.Embedding(vocab_size, embedding_dim)
+        self.embedding = embedding_layer
         self.rnn = torch.nn.RNN(
             embedding_dim, output_size, 1, batch_first=True
         )
@@ -293,8 +324,9 @@ class Discriminator(torch.nn.Module):
 
     def forward(self, x):
         batch_size = x.shape[0]
-        seq_len = x.shape[1]
-        embedded_x = self.embedding(x)
+
+        with torch.no_grad():
+            embedded_x = self.embedding(x)
 
         # RNN Layer
         init_hidden = torch.zeros(1, batch_size, self.output_size).to(

@@ -11,6 +11,7 @@ from data import (
     cluster_labels_no_outliers,
     train_dataset,
     test_dataset,
+    tokenizer,
 )
 from config import NUM_EPOCHS, BATCH_SIZE, NAME
 from utils.model_utils import label_tensor_to_one_hot
@@ -52,7 +53,7 @@ def training_step(
 
     # sampling the target styles for a whole patch
     sampled_style_indexes = random.sample(
-        list(cluster_labels_no_outliers), BATCH_SIZE
+        list(cluster_labels_no_outliers), real_data.shape[0]
     )
     style_encoding = label_tensor_to_one_hot(
         torch.Tensor(sampled_style_indexes).long(), STYLE_DIM
@@ -78,8 +79,10 @@ def training_step(
     # Classify all fake batch with D
     output = discriminator(fake_data)
 
+    false_label = torch.zeros(style_encoding.shape).to(device)
+
     # Calculate D's loss on the all-fake batch
-    discriminator_fake_loss = criterion(output, style_encoding)
+    discriminator_fake_loss = criterion(output, false_label)
 
     # Calculate the gradients for this batch, accumulated (summed) with previous gradients
     discriminator_fake_loss.backward()
@@ -102,8 +105,30 @@ def training_step(
     # Calculate gradients for G
     generator_class_loss.backward()
 
-    # TODO: add the modifier loss
-    generator_loss = generator_class_loss
+    generated_text_batch = tokenizer.batch_decode(
+        fake_data, skip_special_tokens=True
+    )
+    generated_input_batch = tokenizer(
+        generated_text_batch,
+        max_length=1024,
+        padding="max_length",
+        truncation=True,
+        return_tensors="pt",
+    )
+    generated_input_batch = {
+        k: v.to(device) for k, v in generated_input_batch.items()
+    }
+    generated_encoding = generator.get_encoding(**generated_input_batch)[0]
+    modifier_loss = (
+        1
+        - torch.nn.CosineSimilarity(dim=-1, eps=1e-08)(
+            generated_encoding, modifier_output
+        ).mean()
+    )
+
+    modifier_loss.backward()
+
+    generator_loss = generator_class_loss + modifier_loss
 
     # Update G
     generator_optimizer.step()
@@ -117,8 +142,9 @@ def train():
     generator = InRepPlusGAN(style_dim=STYLE_DIM).to(device)
     discriminator = Discriminator(
         vocab_size=generator.config.vocab_size,
-        embedding_dim=512,
-        output_size=128,
+        embedding_layer=generator.encoder.embed_tokens,
+        embedding_dim=generator.config.d_model,
+        output_size=768,
         style_dim=STYLE_DIM,
         device=device,
     ).to(device)
