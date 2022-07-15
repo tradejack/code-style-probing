@@ -36,6 +36,7 @@ def training_step(
     # All-real training
     # Format real batch
     real_data = input_batch["input_ids"]
+    seq_len = real_data.shape[1]
     real_style = label_tensor_to_one_hot(input_batch["labels"], STYLE_DIM).to(
         device
     )
@@ -110,7 +111,7 @@ def training_step(
     )
     generated_input_batch = tokenizer(
         generated_text_batch,
-        max_length=1024,
+        max_length=seq_len,
         padding="max_length",
         truncation=True,
         return_tensors="pt",

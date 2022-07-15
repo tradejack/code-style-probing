@@ -12,7 +12,7 @@ CODET5_TRAIN = "datasets/codet5_train.hf"
 CODET5_TEST = "datasets/codet5_test.hf"
 
 MODEL = "codet5"  # "codet5" or "plbart"
-ARCH = "plbart_token_level_embed"
+ARCH = "codet5_gan"
 BATCH_SIZE = 8
 NUM_EPOCHS = 100
 

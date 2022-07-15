@@ -171,10 +171,7 @@ class InRepPlusGAN(torch.nn.Module):
         seq_len = encoder_outputs[0].shape[1]
 
         style_encoding = style_encoding.unsqueeze(1).expand(-1, seq_len, -1)
-        #         for _ in range(1, seq_len):
-        #             style_encoding = torch.cat((style_encoding, style_encoding.unsqueeze(1)), dim=1)
 
-        #         print(encoder_outputs[0].shape, style_encoding.shape)
         combined_encoding = torch.cat(
             (encoder_outputs[0], style_encoding), dim=-1
         )
@@ -218,9 +215,9 @@ class InRepPlusGAN(torch.nn.Module):
             )
 
         with torch.no_grad():
-            lm_logits = (
-                self.model.lm_head(outputs[0]) + self.model.final_logits_bias
-            )
+            lm_logits = self.model.lm_head(outputs[0])
+            if MODEL == "plbart":
+                lm_logits += self.model.final_logits_bias
 
         masked_lm_loss = None
         if labels is not None:

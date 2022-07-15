@@ -4,11 +4,20 @@ from transformers import default_data_collator
 from datasets import load_from_disk, Dataset
 from torch.utils.data import DataLoader
 
-from config import BATCH_SIZE, PLBART_TRAIN, PLBART_TEST, MODEL
+from config import (
+    BATCH_SIZE,
+    PLBART_TRAIN,
+    PLBART_TEST,
+    CODET5_TRAIN,
+    CODET5_TEST,
+    MODEL,
+)
 from vocab import Vocab
 
-train_dataset = load_from_disk(PLBART_TRAIN)
-test_dataset = load_from_disk(PLBART_TEST)
+train_path = PLBART_TRAIN if MODEL == "plbart" else CODET5_TRAIN
+test_path = PLBART_TEST if MODEL == "plbart" else CODET5_TEST
+train_dataset = load_from_disk(train_path)
+test_dataset = load_from_disk(test_path)
 
 train_dataset.set_format(columns=["input_ids", "attention_mask", "labels"])
 test_dataset.set_format(columns=["input_ids", "attention_mask", "labels"])
@@ -34,7 +43,7 @@ STYLE_DIM = len(np.unique(cluster_labels_no_outliers))
 
 
 if MODEL == "codet5":
-    tokenizer = RobertaTokenizer.from_pretrained("Salesforce/codet5-small")
+    tokenizer = RobertaTokenizer.from_pretrained("Salesforce/codet5-base")
 elif MODEL == "plbart":
     tokenizer = PLBartTokenizer.from_pretrained(
         "uclanlp/plbart-multi_task-python",
