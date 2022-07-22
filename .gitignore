@@ -9,6 +9,8 @@ decompiler-testing/test.cpython-39.pyc
 prediction_results
 results_ken
 results_codet5
+results_plbart
+results_gan
 datasets
 clustering_results
 checkpoint
