@@ -11,7 +11,6 @@ from transformers.modeling_outputs import (
     Seq2SeqModelOutput,
 )
 
-from config import MODEL
 
 
 def shift_tokens_right(input_ids: torch.Tensor, pad_token_id: int):
@@ -56,16 +55,17 @@ class Modifier(torch.nn.Module):
 
 
 class InRepPlusGAN(torch.nn.Module):
-    def __init__(self, style_dim):
+    def __init__(self, style_dim, model):
         super(InRepPlusGAN, self).__init__()
-        if MODEL == "plbart":
+        if model == "plbart":
             self.model = PLBartForConditionalGeneration.from_pretrained(
                 "uclanlp/plbart-multi_task-python",
             )
-        elif MODEL == "codet5":
+        elif model == "codet5":
             self.model = T5ForConditionalGeneration.from_pretrained(
                 "Salesforce/codet5-base",
             )
+        self.model_type = model
         self.encoder = self.model.get_encoder()
         self.decoder = self.model.get_decoder()
         self.config = self.model.config
@@ -216,7 +216,7 @@ class InRepPlusGAN(torch.nn.Module):
 
         with torch.no_grad():
             lm_logits = self.model.lm_head(outputs[0])
-            if MODEL == "plbart":
+            if self.model_type == "plbart":
                 lm_logits += self.model.final_logits_bias
 
         masked_lm_loss = None
