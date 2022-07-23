@@ -1,15 +1,9 @@
 import ast
 import astor
 
-parsed = ast.parse(open("source.py").read())
+parsed = ast.parse(open('source.py').read())
 for node in ast.walk(parsed):
-    # let's work only on functions & classes definitions
-    if isinstance(node, (ast.FunctionDef)):
-        print("Yes")
-    if not isinstance(
-        node, (ast.FunctionDef, ast.ClassDef, ast.AsyncFunctionDef)
-    ):
-        # print("Inside If 1")
+    if not isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.AsyncFunctionDef)):
         continue
 
     if not len(node.body):
@@ -18,9 +12,7 @@ for node in ast.walk(parsed):
     if not isinstance(node.body[0], ast.Expr):
         continue
 
-    if not hasattr(node.body[0], "value") or not isinstance(
-        node.body[0].value, ast.Str
-    ):
+    if not hasattr(node.body[0], 'value') or not isinstance(node.body[0].value, ast.Str):
         continue
 
     # Uncomment lines below if you want print what and where we are removing
@@ -29,40 +21,30 @@ for node in ast.walk(parsed):
 
     node.body = node.body[1:]
 
-print(
-    "***** Processed source code output ******\n========================================="
-)
+print('***** Processed source code output ******\n=========================================')
 
-# print(astor.to_source(parsed))
+#print(astor.to_source(parsed))
+
 
 
 class toLower(ast.NodeTransformer):
+
     def visit_arg(self, node):
-        print(node.lineno)
-        print("node arg is : ", node.arg)
-        return ast.arg(**{**node.__dict__, "arg": node.arg.lower()})
-
+        print("Inside args")
+        return ast.arg(**{**node.__dict__, 'arg':node.arg.lower().replace("_","")})
     def visit_Name(self, node):
-        print("node id is : ", node.id)
-        return ast.Name(**{**node.__dict__, "id": node.id.lower()})
+        print("Inside name")
+        return ast.Name(**{**node.__dict__, 'id':node.id.lower()})
+    
 
-
-# new_code = ast.unparse(toLower().visit(ast.parse(parsed)))
 new_code = ast.unparse(toLower().visit(parsed))
-print(new_code)
+#print(new_code)
 
+class toFuncLower(ast.NodeTransformer):
+    def visit_FunctionDef(self, node):
+        print("Inside Func Def")
+        return ast.FunctionDef(**{**node.__dict__, 'name':node.name.lower().replace("_","")})
 
-# def count_method_with_docstring(ast_tree):
-#     count = 0
-#     for node in ast.walk(ast_tree):
-#         _id = type(node)
-
-#         if _id == ast.FunctionDef:
-#             ds = node.name
-#             print(ds.lower())
-
-#     return ds.lower()
-
-
-# abc = count_method_with_docstring(parsed)
-# #print(abc)
+parsed_new = ast.parse(new_code)
+final_code = ast.unparse(toFuncLower().visit(parsed_new))
+print(final_code)
