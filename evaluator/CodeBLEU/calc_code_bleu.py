@@ -14,8 +14,10 @@ def get_codebleu(refs, hyp, lang, params='0.25,0.25,0.25,0.25'):
     alpha, beta, gamma, theta = [float(x) for x in params.split(',')]
 
     # preprocess inputs
-    pre_references = [[x.strip() for x in open(file, 'r', encoding='utf-8').readlines()] for file in refs]
-    hypothesis = [x.strip() for x in open(hyp, 'r', encoding='utf-8').readlines()]
+    # pre_references = [[x.strip() for x in open(file, 'r', encoding='utf-8').readlines()] for file in refs]
+    # hypothesis = [x.strip() for x in open(hyp, 'r', encoding='utf-8').readlines()]
+    pre_references = [[x.strip() for x in scripts] for scripts in refs]
+    hypothesis = [x.strip() for x in hyp]
 
     for i in range(len(pre_references)):
         assert len(hypothesis) == len(pre_references[i])
@@ -26,7 +28,8 @@ def get_codebleu(refs, hyp, lang, params='0.25,0.25,0.25,0.25'):
         for j in range(len(pre_references)):
             ref_for_instance.append(pre_references[j][i])
         references.append(ref_for_instance)
-    assert len(references) == len(pre_references) * len(hypothesis)
+    # assert len(references) == len(pre_references) * len(hypothesis)
+    assert len(references) == len(hypothesis)
 
     # calculate ngram match (BLEU)
     tokenized_hyps = [x.split() for x in hypothesis]
