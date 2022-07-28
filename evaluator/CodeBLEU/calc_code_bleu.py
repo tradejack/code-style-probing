@@ -55,15 +55,22 @@ def get_codebleu(refs, hyp, lang, params='0.25,0.25,0.25,0.25'):
     # calculate dataflow match
     dataflow_match_score = dataflow_match.corpus_dataflow_match(references, hypothesis, lang)
 
-    print('ngram match: {0}, weighted ngram match: {1}, syntax_match: {2}, dataflow_match: {3}'. \
-          format(ngram_match_score, weighted_ngram_match_score, syntax_match_score, dataflow_match_score))
+    # print('ngram match: {0}, weighted ngram match: {1}, syntax_match: {2}, dataflow_match: {3}'. \
+    #       format(ngram_match_score, weighted_ngram_match_score, syntax_match_score, dataflow_match_score))
 
     code_bleu_score = alpha * ngram_match_score \
                       + beta * weighted_ngram_match_score \
                       + gamma * syntax_match_score \
                       + theta * dataflow_match_score
-
-    return code_bleu_score
+    
+    score_dict = {
+        "ngram": ngram_match_score,
+        "weighted_ngram": weighted_ngram_match_score,
+        "syntax_match": syntax_match_score,
+        "dataflow_match": dataflow_match_score,
+        "code_bleu": code_bleu_score,
+    }
+    return score_dict.copy()
 
 
 if __name__ == '__main__':
