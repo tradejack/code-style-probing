@@ -1,5 +1,6 @@
 import ast
-import astor
+#import astor
+import pandas as pd
 
 parsed = ast.parse(open('source.py').read())
 for node in ast.walk(parsed):
@@ -36,7 +37,8 @@ class toLower(ast.NodeTransformer):
         print("Inside name")
         return ast.Name(**{**node.__dict__, 'id':node.id.lower()})
     
-
+# data_input = pd.read_csv('data/evaluation_set.csv')
+# print(data_input.head())
 new_code = ast.unparse(toLower().visit(parsed))
 #print(new_code)
 
