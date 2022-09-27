@@ -1,6 +1,23 @@
 # Code Style Transfer & Probing
 UCSC IBM Capstone dedicated to probing large language models for code style.
-
+- [Code Style Transfer & Probing](#code-style-transfer---probing)
+  * [Data Preprocessing](#data-preprocessing)
+    + [Extract Metrics from Py150k](#extract-metrics-from-py150k)
+    + [Raw Script Tokenization](#raw-script-tokenization)
+    + [Individual Feature Parallel Corpora Generation](#individual-feature-parallel-corpora-generation)
+    + [Combined Feature Parallel Corpora Generation](#combined-feature-parallel-corpora-generation)
+    + [Splitting Long Sequences](#splitting-long-sequences)
+  * [GAN Training](#gan-training)
+      - [GAN Training(not used)](#gan-training-not-used-)
+  * [End-to-End Training Pipeline Instruction](#end-to-end-training-pipeline-instruction)
+    + [1. Parallel Corpus Tokenization](#1-parallel-corpus-tokenization)
+      - [Example](#example)
+    + [2. Add Control Tokens(combined model only)](#2-add-control-tokens-combined-model-only-)
+      - [Example](#example-1)
+    + [3. Training](#3-training)
+      - [Finetuning for Seq2Seq Model](#finetuning-for-seq2seq-model)
+    + [4. Seq2Seq Inference](#4-seq2seq-inference)
+    + [5. Evaluation](#5-evaluation)
 
 ## Data Preprocessing
 ### Extract Metrics from Py150k
@@ -60,6 +77,7 @@ python parallel_preprocessing_script.py FEATURES CSV_NAME OUTPUT_PATH
 ```
 
 **FEATURES**: Any combination of the feature that to be transferred and should be combined with `+`, i.e. casing+class+list_comp+comment+docstring
+
 **CSV_NAME**: CSV file that contains all individual features
 - **train set - casing:** `bq_data_uncased.csv`
 - **train set - class:** `bq_data_outlier_no_class.csv`
