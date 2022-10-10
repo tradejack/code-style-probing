@@ -209,3 +209,30 @@ The output will be a prediction file that contains input/prediction/label.
 
 ### 5. Evaluation
 Please see `seq2seq_eval.ipynb`(individual) and `combined_seq2seq_eval.ipynb`(combined) for evaluation.
+
+#### Script Usage
+We now have a script `evaluate_score` for running the evaluation:
+```
+Usage: evaluate_score.py [OPTIONS] PRED_DIR OUTPUT_DIR TARGET_FEAT
+
+Arguments:
+  PRED_DIR     [required]
+  OUTPUT_DIR   [required]
+  TARGET_FEAT  [required]
+
+Options:
+  --is-nl-tokens-added / --no-is-nl-tokens-added
+                                  [default: no-is-nl-tokens-added]
+  --clean-diff / --no-clean-diff  [default: clean-diff]
+
+Example:
+python evaluate_score.py \
+/data/ken/data/code/decorator.output_post_process.csv \
+./test.json decorator \
+--clean-diff
+```
+
+- PRED_DIR: You prediction csv file
+- OUTPUT_DIR: You score output json file name
+- is-nl-tokens-added: if true, will run preprocessing on removing nl prompt(combined model only)
+- clean-diff: will clean some inconsistent characters caused by AST parse and unparse before calculating DiffBLEU
