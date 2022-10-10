@@ -1,0 +1,12 @@
+pandas
+typer
+transformers
+datasets
+astunparse
+sentencepiece
+sklearn
+tree_sitter
+jupyterlab
+ipywidgets
+termcolor
+nltk
