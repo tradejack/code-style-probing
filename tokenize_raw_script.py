@@ -14,13 +14,7 @@ output_dir_dict = {
     "eval": "datasets/evaluation_dataset/raw_scripts_dataset.hf",
 }
 
-
-def main(split):
-    assert split in ["train", "eval"]
-
-    input_df = pd.read_csv(input_dir_dict[split])
-    output_dir = output_dir_dict[split]
-
+def raw_tokenize(input_df, output_dir):
     tokenizer = RobertaTokenizer.from_pretrained("Salesforce/codet5-base")
 
     def tokenization(example):
@@ -34,11 +28,19 @@ def main(split):
         if type(script) != str:
             new_df["content"][idx] = ""
     current_df = new_df
-
     dataset = Dataset.from_pandas(current_df)
     dataset = dataset.map(tokenization, batched=True)
     dataset.set_format(type="torch", columns=["input_ids", "attention_mask"])
     dataset.save_to_disk(output_dir)
+    return dataset
+
+def main(split):
+    assert split in ["train", "eval"]
+
+    input_df = pd.read_csv(input_dir_dict[split])
+    output_dir = output_dir_dict[split]
+    _ = raw_tokenize(input_df, output_dir)
+
 
 
 if __name__ == "__main__":

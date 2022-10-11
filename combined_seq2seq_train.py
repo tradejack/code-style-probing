@@ -21,7 +21,9 @@ from transformers import (
 )
 import pandas as pd
 
+batch_size = 16
 output_model_name = "combined_nl_prompt_base_features_contd_codet5small"
+checkpoint="seq2seq_results/combined_nl_prompt_base_features_codet5small/epoch 2/checkpoint-85000"
 
 tokenizer = RobertaTokenizer.from_pretrained(
     "Salesforce/codet5-base", additional_special_tokens=["<nl>", "</nl>"]
@@ -273,11 +275,7 @@ class MultitaskTrainer(Seq2SeqTrainer):
 # model = AutoModelForSeq2SeqLM.from_config(config)
 
 
-model = AutoModelForSeq2SeqLM.from_pretrained(
-    "seq2seq_results/combined_nl_prompt_base_features_codet5small/epoch 2/checkpoint-85000"
-)
-
-batch_size = 16
+model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint)
 
 
 model.config.max_length = 512

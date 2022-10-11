@@ -45,3 +45,7 @@ def calculate_ratio(numerator, denominator, round_val=6):
 
 def metric_dict_to_df(metric_dict_list):
     return pd.DataFrame(metric_dict_list).fillna(0)
+
+
+def print_split_line(s):
+    print(f"\n====================={s.upper()}=====================\n")

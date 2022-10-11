@@ -26,7 +26,6 @@ model_checkpoint = "Salesforce/codet5-small"
 inference_only = False
 down_size_test_set = True
 is_baseline = True
-
 batch_size = 16
 
 
