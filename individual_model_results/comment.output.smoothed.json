@@ -1,0 +1,18 @@
+{
+    "codebleu_perfect": 0.1405,
+    "codebleu_above_90": 0.3575,
+    "diff_bleu_avg": 0.22428348859847216,
+    "diff_bleu_perfect": 0.1135,
+    "diff_bleu_above_90": 0.1295,
+    "comment_text_scores_avg": 0.1382616215482372,
+    "comment_text_scores_perfect": 0.075,
+    "comment_text_scores_above_90": 0.0885,
+    "parse_test_accuracy": 0.9105,
+    "codebleu": {
+        "ngram": 0.6659813691330659,
+        "weighted_ngram": 0.6827295108780136,
+        "syntax_match": 0.9026375193061661,
+        "dataflow_match": 0.9605700350556318,
+        "code_bleu": 0.8029796085932194
+    }
+}
