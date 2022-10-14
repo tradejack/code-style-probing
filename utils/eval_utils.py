@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
 from evaluator.CodeBLEU.calc_code_bleu import get_codebleu
-from nltk.translate.bleu_score import sentence_bleu
+from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 
 from utils.regex_parse import comment
 
@@ -161,6 +161,7 @@ def get_valid_pred_df(df):
     return df[df.apply(lambda row: is_valid_transfer(row["inputs"], row["labels"]), axis=1)]
 
 def evaluate_pred_df(pred_df, target_feats, clean_diff=False, is_nl=False, parse_test=True):
+    smoothing_function = SmoothingFunction()
 
     inputs = pred_df["inputs"].to_numpy()
     labels = pred_df["labels"].to_numpy()
@@ -255,7 +256,7 @@ def evaluate_pred_df(pred_df, target_feats, clean_diff=False, is_nl=False, parse
         diff_bleu_score = 0
         if len(pred_diff_str.split()) > 0:
             diff_bleu_score = sentence_bleu(
-                [gold_diff_str.split()], pred_diff_str.split(), auto_reweigh=True
+                [gold_diff_str.split()], pred_diff_str.split(), smoothing_function=smoothing_function.method1, auto_reweigh=True
             )
 
         code_scores += [code_score]
