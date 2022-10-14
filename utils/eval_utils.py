@@ -168,7 +168,7 @@ def evaluate_pred_df(pred_df, target_feats, clean_diff=False, is_nl=False, parse
     preds = pred_df["preds"].to_numpy()
 
     if is_nl:
-        inputs = [remove_nl_prompt(input_script) for input_script in inputs]
+        inputs = np.array([remove_nl_prompt(input_script) for input_script in inputs])
 
     code_scores = []
     diff_bleu_scores = []
