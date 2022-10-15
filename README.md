@@ -189,14 +189,30 @@ You will need to configure the training in the script:
 
 
 ### 4. Seq2Seq Inference
-```bash
-export CUDA_VISIBLE_DEVICES=$(python gpu.py | tail -n 1); \
-    python seq2seq_inference.py \
-    DATASET_PATH \
-    CHECKPOINT \
-    OUTPUT_FILE_PATH \
-    [IS_NL] \
-    [IS_DOWNSIZE]
+```
+Usage: seq2seq_inference.py [OPTIONS] INFERENCE_DATASET MODEL_CKPT_PATH
+                            OUTPUT_CSV_FILENAME
+
+Arguments:
+  INFERENCE_DATASET    [required]
+  MODEL_CKPT_PATH      [required]
+  OUTPUT_CSV_FILENAME  [required]
+
+Options:
+  --batch-size INTEGER            [default: 8]
+  --is-nl / --no-is-nl            [default: no-is-nl]
+  --is-downsize / --no-is-downsize
+                                  [default: no-is-downsize]
+
+Example:
+rm -rf codestylist ; \
+export CUDA_VISIBLE_DEVICES=1; \
+python seq2seq_inference.py \
+/data/code/curated_eval_set/curated_docstring_dataset_with_prompt.hf \
+codestylist/combined_code_style_transformer \
+combined_model_results/docstring.non_downsized.output.csv \
+--batch-size 64 \
+--is-nl ;
 ```
 
 **DATASET_PATH**: The path of the test set. (`.hf`)

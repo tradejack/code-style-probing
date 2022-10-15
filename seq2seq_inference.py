@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import typer
 
 
@@ -5,8 +7,9 @@ def main(
     inference_dataset,
     model_ckpt_path,
     output_csv_filename,
-    is_nl=False,
-    is_downsize=False,
+    batch_size: int = 8,
+    is_nl: bool = False,
+    is_downsize: bool = False,
 ):
 
     import pandas as pd
@@ -18,9 +21,10 @@ def main(
         Seq2SeqTrainer,
     )
 
-    test_codet5_dataset = load_from_disk(inference_dataset)
+    output_dir = "/".join(output_csv_filename.split("/")[:-1])
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-    batch_size = 16
+    test_codet5_dataset = load_from_disk(inference_dataset)
 
     tokenizer = AutoTokenizer.from_pretrained(model_ckpt_path)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_ckpt_path)
@@ -65,15 +69,13 @@ def main(
     predictions, labels, report = eval_preds
     inputs = test_codet5_dataset["input_ids"]
     decoded_inputs = tokenizer.batch_decode(inputs, skip_special_tokens=True)
-    decoded_preds = tokenizer.batch_decode(
-        predictions, skip_special_tokens=True
-    )
+    decoded_preds = tokenizer.batch_decode(predictions, skip_special_tokens=True)
     decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
     df = pd.DataFrame(decoded_preds, columns=["preds"])
     df["labels"] = decoded_labels
     df["inputs"] = decoded_inputs
-    df.to_csv(f"{model_ckpt_path}/{output_csv_filename}")
+    df.to_csv(f"{output_csv_filename}")
 
 
 if __name__ == "__main__":
