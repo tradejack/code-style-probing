@@ -30,8 +30,12 @@ def clean_full_df(df, target_feats):
         df = clean_df(df, "no_class_content", "uncommented_content")
     if "casing" in target_feats:
         df = clean_df(df, "no_casing_content", "uncommented_content")
+    if "docstring" in target_feats:
+        df = clean_df(df, "no_docstring_content", "uncommented_content")
     if "comment" in target_feats:
         df = clean_df(df, "uncommented_content", "content")
+    if "decorator" in target_feats:
+        df = clean_df(df,"no_decorator_content", "uncommented_content")
     return df
 
 
@@ -80,7 +84,7 @@ def get_csv_dir(is_short):
         return "data/eval_parallel_corpora/eval_set_individual_feat.csv"
 
 
-def main(target_feat, is_short=False):
+def main(target_feat, csv_name: str = "", output_dir: str = "", is_short=False):
 
     target_feats = target_feat.split("+")
     first_feat = None
@@ -91,11 +95,10 @@ def main(target_feat, is_short=False):
         if feat in target_feats:
             first_feat = feat
             break
-    csv_dir = get_csv_dir(is_short)
+
+    csv_dir = csv_name if csv_name else get_csv_dir(is_short)
     # combined generate pipeline
-    Y_column_name = (
-        "content" if "comment" in target_feats else "uncommented_content"
-    )
+    Y_column_name = "content" if "comment" in target_feats else "uncommented_content"
     current_df = None
     ## docstring
     ### fix docstring length
@@ -157,11 +160,7 @@ def main(target_feat, is_short=False):
         )
 
     ## if docstring applied, recover comments in labels
-    if (
-        "docstring" in target_feats
-        and "comment" in target_feats
-        and not is_short
-    ):
+    if "docstring" in target_feats and "comment" in target_feats and not is_short:
         current_df = recover_fixed_docstring_labels(current_df)
 
     ## comment
@@ -174,16 +173,15 @@ def main(target_feat, is_short=False):
         current_df = clean_df(current_df, "X", "Y")
 
     current_df = (
-        current_df[["X", "Y"]]
-        .copy()
-        .rename(columns={"X": "input", "Y": "label"})
+        current_df[["X", "Y"]].copy().rename(columns={"X": "input", "Y": "label"})
     )
     suffix = "_".join([feat for feat in feat_order if feat in target_feats])
     if is_short:
         suffix = f"short_{suffix}"
-    current_df.to_csv(f"data/eval_parallel_corpora/eval_set_{suffix}.csv")
+    current_df.to_csv(
+        f"{output_dir if output_dir else 'data/eval_parallel_corpora'}/eval_set_{suffix}.csv"
+    )
 
 
 if __name__ == "__main__":
     typer.run(main)
-

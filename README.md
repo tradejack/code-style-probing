@@ -44,11 +44,30 @@ python parallel_corpora_gen_script.py \
 **OUTPUT_CSV_PATH**: the path for the output file. It will be a csv file containing all the script that the individual features are transferred.
 
 ### Combined Feature Parallel Corpora Generation
-```bash
+```
 python combined_parallel_gen_script.py FEATURES
+Example: 
+python combined_parallel_gen_script.py comment+docstring \
+--csv-name /data/curated_eval_set/eval_set_short_individual_feat.csv \
+--output-dir /data/curated_eval_set \
+--is-short True
+
+Arguments:
+  TARGET_FEAT  [required]
+
+Options:
+  --csv-name TEXT
+  --output-dir TEXT
+  --is-short TEXT                 [default: False]
 ```
 
-**FEATURES**: Any combination of the feature that to be transferred and should be combined with `+`, i.e. comment+docstring
+- **TARGET_FEAT**: Any combination of the feature that to be transferred and should be combined with `+`, i.e. comment+docstring
+
+- `csv-name`: Input CSV file, should be the file with all individual feature transfer scripts.
+
+- `output-dir`: The output location
+
+- `is-short`: Whether the input script is the shorten version(in the range of the max length)
 
 
 
