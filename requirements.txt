@@ -10,3 +10,4 @@ jupyterlab
 ipywidgets
 termcolor
 nltk
+torch
