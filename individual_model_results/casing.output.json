@@ -1,7 +1,7 @@
 {
     "codebleu_perfect": 0.6690035052578869,
-    "codebleu_above_90": 0.8808212318477716,
-    "diff_bleu_avg": 0.7375647773813154,
+    "codebleu_above_90": 0.8803204807210816,
+    "diff_bleu_avg": 0.7533329475007162,
     "diff_bleu_perfect": 0.6830245368052078,
     "diff_bleu_above_90": 0.6840260390585878,
     "parse_test_accuracy": 0.9409113670505759,
@@ -9,7 +9,7 @@
         "ngram": 0.944280533492866,
         "weighted_ngram": 0.9586894979693359,
         "syntax_match": 0.9965767143741578,
-        "dataflow_match": 0.9744488776044815,
-        "code_bleu": 0.9684989058602103
+        "dataflow_match": 0.9743951423313049,
+        "code_bleu": 0.9684854720419162
     }
 }

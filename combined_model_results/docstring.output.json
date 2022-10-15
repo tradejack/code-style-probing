@@ -1,18 +1,18 @@
 {
     "codebleu_perfect": 0.0,
-    "codebleu_above_90": 0.19718309859154928,
-    "diff_bleu_avg": 0.001625833207549657,
-    "diff_bleu_perfect": 0.0,
-    "diff_bleu_above_90": 0.0,
+    "codebleu_above_90": 0.18040979510244878,
+    "diff_bleu_avg": 0.009498530768585076,
+    "diff_bleu_perfect": 0.0014992503748125937,
+    "diff_bleu_above_90": 0.0014992503748125937,
     "docstr_text_scores_avg": 0.0,
     "docstr_text_scores_perfect": 0.0,
     "docstr_text_scores_above_90": 0.0,
-    "parse_test_accuracy": 0.8098591549295775,
+    "parse_test_accuracy": 0.792103948025987,
     "codebleu": {
-        "ngram": 0.5118941299123334,
-        "weighted_ngram": 0.5663263195383885,
-        "syntax_match": 0.8376068376068376,
-        "dataflow_match": 0.9091899745731928,
-        "code_bleu": 0.7062543154076881
+        "ngram": 0.4928618566590386,
+        "weighted_ngram": 0.6069486041769219,
+        "syntax_match": 0.844495058961831,
+        "dataflow_match": 0.9219965908248722,
+        "code_bleu": 0.7165755276556659
     }
 }

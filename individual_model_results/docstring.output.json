@@ -1,18 +1,18 @@
 {
     "codebleu_perfect": 0.0,
-    "codebleu_above_90": 0.15492957746478872,
-    "diff_bleu_avg": 0.030940083630934194,
+    "codebleu_above_90": 0.13893053473263367,
+    "diff_bleu_avg": 0.023437531946290564,
     "diff_bleu_perfect": 0.0,
-    "diff_bleu_above_90": 0.017605633802816902,
+    "diff_bleu_above_90": 0.005997001499250375,
     "docstr_text_scores_avg": 0.0,
     "docstr_text_scores_perfect": 0.0,
     "docstr_text_scores_above_90": 0.0,
-    "parse_test_accuracy": 0.8028169014084507,
+    "parse_test_accuracy": 0.8295852073963018,
     "codebleu": {
-        "ngram": 0.4175931302706864,
-        "weighted_ngram": 0.6005287841827431,
-        "syntax_match": 0.8354391180478137,
-        "dataflow_match": 0.8889696089114905,
-        "code_bleu": 0.6856326603531834
+        "ngram": 0.3931992392575013,
+        "weighted_ngram": 0.611638602161936,
+        "syntax_match": 0.8168876969986407,
+        "dataflow_match": 0.8752130734454903,
+        "code_bleu": 0.674234652965892
     }
 }
