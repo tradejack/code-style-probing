@@ -2,16 +2,17 @@ from pathlib import Path
 from enum import Enum
 
 import numpy as np
-from datasets import load_from_disk
-from transformers import *
+from datasets import load_from_disk, disable_caching
+from transformers import RobertaTokenizer
 
+disable_caching()
 fname_prefix = "/data/users/cting3/CodeNest/code-style-probing/"
 
 # control codes
 tokenizer = RobertaTokenizer.from_pretrained("Salesforce/codet5-small")
 
 
-feat_order = ["docstring", "list_comp", "class", "casing", "comment"]
+feat_order = ["docstring", "list_comp", "class", "casing", "comment", "decorator"]
 max_size = 512
 
 # ver 1
@@ -87,7 +88,7 @@ def transform_type_1(dataset, target_feats, target_path):
     control_str = "\n".join(control_strs)
     control_toks = tokenizer(control_str)
     control_tok_dataset = dataset.map(
-        lambda ex: control_toks_add(ex, control_toks)
+        lambda ex: control_toks_add(ex, control_toks), load_from_cache_file=False
     )  # add extra args
     control_tok_dataset.save_to_disk(target_path)
 
@@ -99,6 +100,7 @@ def transform_type_2(dataset, target_feats, target_path):
         "docstring": "add docstring",
         "casing": "change identifier casing",
         "list_comp": "change for loop to list comprehension",
+        "decorator": "add decorator",
     }
 
     control_strs = []
@@ -109,7 +111,7 @@ def transform_type_2(dataset, target_feats, target_path):
     prompt = get_prompt(control_str)
     control_toks = tokenizer(prompt, add_special_tokens=False)
     control_tok_dataset = dataset.map(
-        lambda ex: control_nl_toks_add(ex, control_toks)
+        lambda ex: control_nl_toks_add(ex, control_toks), load_from_cache_file=False
     )  # add extra args
     control_tok_dataset.save_to_disk(target_path)
 
@@ -122,6 +124,7 @@ def transform_type_3(dataset, target_feats, target_path):
         "docstring": "add docstring",
         "casing": "change identifier casing",
         "list_comp": "change for loop to list comprehension",
+        "decorator": "add decorator",
     }
 
     control_strs = []
@@ -132,7 +135,7 @@ def transform_type_3(dataset, target_feats, target_path):
     prompt = get_prompt(control_str)
     control_toks = tokenizer(prompt, add_special_tokens=False)
     control_tok_dataset = dataset.map(
-        lambda ex: control_nl_toks_add(ex, control_toks)
+        lambda ex: control_nl_toks_add(ex, control_toks), load_from_cache_file=False
     )  # add extra args
     control_tok_dataset.save_to_disk(target_path)
 
@@ -145,6 +148,7 @@ def transform_type_4(dataset, target_feats, target_path):
         "docstring": "docstring",
         "casing": "casing",
         "list_comp": "list comprehension",
+        "decorator": "decorator",
     }
 
     control_strs = []
@@ -155,7 +159,7 @@ def transform_type_4(dataset, target_feats, target_path):
     prompt = get_prompt(control_str)
     control_toks = tokenizer(prompt, add_special_tokens=False)
     control_tok_dataset = dataset.map(
-        lambda ex: control_nl_toks_add(ex, control_toks)
+        lambda ex: control_nl_toks_add(ex, control_toks), load_from_cache_file=False
     )  # add extra args
     control_tok_dataset.save_to_disk(target_path)
 
@@ -176,7 +180,7 @@ def main(
 
     target_feats = [feat for feat in feat_order if feat in target_feats]
 
-    dataset = load_from_disk(source_dataset)
+    dataset = load_from_disk(source_dataset, keep_in_memory=False)
     if transformation_type == 1:
         transform_type_1(dataset, target_feats, target_path)
 
