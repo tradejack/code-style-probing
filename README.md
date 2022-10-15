@@ -222,7 +222,7 @@ combined_model_results/docstring.non_downsized.output.csv \
 - **IS_DOWNSIZE**: [true|false], whether need to downsize the test set, will downsize it to 2000 examples.
 
 The output will be a prediction file that contains input/prediction/label.
-
+> The removal of `codestylist` folder is because the trainer will create a foler automatically and will have error if we try to load the model from the hub, it will try to load from the empty folder created by trainer instead. So it is needed to remove the folder first no matter whether it exists.
 ### 5. Evaluation
 Please see `seq2seq_eval.ipynb`(individual) and `combined_seq2seq_eval.ipynb`(combined) for evaluation.
 
