@@ -9,7 +9,14 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 
-feat_order = ["docstring", "list_comp", "class", "casing", "comment"]
+feat_order = [
+    "docstring",
+    "list_comp",
+    "class",
+    "casing",
+    "comment",
+    "decorator",
+]
 # Docstring fix length
 def undocstring(source):
     if '"""' in source or "'''" in source:
@@ -230,9 +237,16 @@ import typer
 # output_dir="datasets/evaluation_dataset/codet5_{target_feat}_eval_set_padded.hf"
 
 
-def main(target_feat, csv_fname, output_dir):
+def main(target_feat, csv_fname, output_dir, is_short: bool = False):
 
-    feat_names = ["comment", "class", "docstring", "list_comp", "casing"]
+    feat_names = [
+        "comment",
+        "class",
+        "docstring",
+        "list_comp",
+        "casing",
+        "decorator",
+    ]
 
     if "+" in target_feat:
         # combined feats
@@ -293,8 +307,19 @@ def main(target_feat, csv_fname, output_dir):
                 columns={"no_casing_content": "X", "uncommented_content": "Y"}
             )
         )
+    if target_feat == "decorator":
+        current_df = (
+            df[["uncommented_content", "no_decorator_content"]]
+            .copy()
+            .rename(
+                columns={
+                    "no_decorator_content": "X",
+                    "uncommented_content": "Y",
+                }
+            )
+        )
 
-    if target_feat == "docstring":
+    if target_feat == "docstring" and not is_short:
         current_df = fix_docstring_len(current_df)
 
     if target_feat not in feat_names:
@@ -330,4 +355,3 @@ def main(target_feat, csv_fname, output_dir):
 
 if __name__ == "__main__":
     typer.run(main)
-

@@ -45,12 +45,7 @@ python parallel_corpora_gen_script.py \
 
 ### Combined Feature Parallel Corpora Generation
 ```
-python combined_parallel_gen_script.py FEATURES
-Example: 
-python combined_parallel_gen_script.py comment+docstring \
---csv-name /data/curated_eval_set/eval_set_short_individual_feat.csv \
---output-dir /data/curated_eval_set \
---is-short True
+python combined_parallel_gen_script.py [OPTIONS] TARGET_FEAT
 
 Arguments:
   TARGET_FEAT  [required]
@@ -59,6 +54,13 @@ Options:
   --csv-name TEXT
   --output-dir TEXT
   --is-short TEXT                 [default: False]
+
+
+Example: 
+python combined_parallel_gen_script.py comment+docstring \
+--csv-name /data/curated_eval_set/eval_set_short_individual_feat.csv \
+--output-dir /data/curated_eval_set \
+--is-short True
 ```
 
 - **TARGET_FEAT**: Any combination of the feature that to be transferred and should be combined with `+`, i.e. comment+docstring
@@ -91,22 +93,37 @@ export CUDA_VISIBLE_DEVICES=$(python gpu.py | tail -n 1); python train.py
 ### 1. Parallel Corpus Tokenization
 
 Tokenizing and filtering out all the NULL value examples.
-```bash
-python parallel_preprocessing_script.py FEATURES CSV_NAME OUTPUT_PATH
+```
+Usage: parallel_preprocessing_script.py [OPTIONS] TARGET_FEAT CSV_FNAME
+                                        OUTPUT_DIR
+
+Arguments:
+  TARGET_FEAT  [required]
+  CSV_FNAME    [required]
+  OUTPUT_DIR   [required]
+
+Options:
+  --is-short / --no-is-short      [default: no-is-short]
+
+Example:
+python parallel_preprocessing_script.py \
+casing+class \
+/data/curated_eval_set/downsized_eval_set_short_class_casing.csv \
+/data/curated_eval_set/downsized_eval_set_short_class_casing_dataset.hf \
+--is-short ; \
 ```
 
-**FEATURES**: Any combination of the feature that to be transferred and should be combined with `+`, i.e. casing+class+list_comp+comment+docstring
-
-**CSV_NAME**: CSV file that contains all individual features
-- **train set - casing:** `bq_data_uncased.csv`
-- **train set - class:** `bq_data_outlier_no_class.csv`
-- **train set - list comp:** `bq_data_uncomp_fixed_outlier.csv`
-- **train set - comment:** `bq_uncommented_outlier.csv`
-- **train set - docstring:** `bq_updated_docstring_outlier.csv`
-- **eval set:** `eval_set_individual_feat.csv`
+- **TARGET_FEAT**: Any combination of the feature that to be transferred and should be combined with `+`, i.e. casing+class+list_comp+comment+docstring
+- **CSV_FNAME**: CSV file that contains all individual features
+  - **train set - casing:** `bq_data_uncased.csv`
+  - **train set - class:** `bq_data_outlier_no_class.csv`
+  - **train set - list comp:** `bq_data_uncomp_fixed_outlier.csv`
+  - **train set - comment:** `bq_uncommented_outlier.csv`
+  - **train set - docstring:** `bq_updated_docstring_outlier.csv`
+  - **eval set:** `eval_set_individual_feat.csv`
     - eval set contains separate labels for each individual transformation
-
-**OUTPUT_PATH**: The output dataset path, whatever you want, which will be a `.hf` file
+- **OUTPUT_DIR**: The output dataset path, whatever you want, which will be a `.hf` file
+- `is-short`: Whether the input script is the shorten version(in the range of the max length)
 
 > Preprocessing on the docstring transfer will be done for removing very long sequence data.
 #### Example
