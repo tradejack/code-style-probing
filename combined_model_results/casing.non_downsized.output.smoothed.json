@@ -1,0 +1,15 @@
+{
+    "codebleu_perfect": 0.2691635091809968,
+    "codebleu_above_90": 0.4910375983678228,
+    "diff_bleu_avg": 0.6344915326382322,
+    "diff_bleu_perfect": 0.5408772952491985,
+    "diff_bleu_above_90": 0.5420577091227048,
+    "parse_test_accuracy": 0.9120664529291752,
+    "codebleu": {
+        "ngram": 0.8042816080718999,
+        "weighted_ngram": 0.8176056982567391,
+        "syntax_match": 0.9266828897261538,
+        "dataflow_match": 0.9264180215411665,
+        "code_bleu": 0.8687470543989898
+    }
+}

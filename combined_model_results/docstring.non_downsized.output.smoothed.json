@@ -1,0 +1,18 @@
+{
+    "codebleu_perfect": 0.0,
+    "codebleu_above_90": 0.1827349737797499,
+    "diff_bleu_avg": 0.009713843951447743,
+    "diff_bleu_perfect": 0.0015559269290612574,
+    "diff_bleu_above_90": 0.0015559269290612574,
+    "docstr_text_scores_avg": 3.3189027004615623e-159,
+    "docstr_text_scores_perfect": 0.0,
+    "docstr_text_scores_above_90": 0.0,
+    "parse_test_accuracy": 0.7981328876851265,
+    "codebleu": {
+        "ngram": 0.5026196876195493,
+        "weighted_ngram": 0.6040096513148235,
+        "syntax_match": 0.8501687922176693,
+        "dataflow_match": 0.928416186052842,
+        "code_bleu": 0.721303579301221
+    }
+}
