@@ -215,11 +215,11 @@ combined_model_results/docstring.non_downsized.output.csv \
 --is-nl ;
 ```
 
-**DATASET_PATH**: The path of the test set. (`.hf`)
-**CHECKPOINT**: The model checkpoint path.
-**OUTPUT_FILE_PATH**: The path of the prediction output
-**IS_NL**: [true|false], whether use the control tokens.
-**IS_DOWNSIZE**: [true|false], whether need to downsize the test set, will downsize it to 2000 examples.
+- **DATASET_PATH**: The path of the test set. (`.hf`)
+- **CHECKPOINT**: The model checkpoint path.
+- **OUTPUT_FILE_PATH**: The path of the prediction output
+- **IS_NL**: [true|false], whether use the control tokens.
+- **IS_DOWNSIZE**: [true|false], whether need to downsize the test set, will downsize it to 2000 examples.
 
 The output will be a prediction file that contains input/prediction/label.
 
